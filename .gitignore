@@ -1,0 +1,16 @@
+#Directories
+.vs/
+bin/
+CMakeFiles/
+Debug/
+MiniRenderer.dir/
+x64/
+
+#Files
+*.user
+*.vcxproj
+*.filters
+*.cmake
+*.sln
+Config.h
+CMakeCache.txt
