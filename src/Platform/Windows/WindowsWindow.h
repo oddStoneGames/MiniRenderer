@@ -1,7 +1,7 @@
-#pragma once
+#ifdef WINDOWS
 
-#include <iostream>
-#include "src/Core/Window.h"
+#pragma once
+#include "../../Core/Window.h"
 
 #include <Windows.h>
 
@@ -9,7 +9,7 @@ namespace MiniRenderer
 {
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	class WindowsWindow : public Window
+	class WindowsWindow : public MiniWindow
 	{
 	public:
 		WindowsWindow(const WindowProperties& windowProps);
@@ -39,8 +39,7 @@ namespace MiniRenderer
 			const char* Title;
 			unsigned int Width, Height;
 			bool VSync;
-		};
-
-		WindowData m_Data;
+		}m_Data;
 	};
 }
+#endif

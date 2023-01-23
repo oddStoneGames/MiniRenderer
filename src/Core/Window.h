@@ -14,7 +14,7 @@ namespace MiniRenderer
 		uint32_t Width;
 		uint32_t Height;
 
-		WindowProperties(const const char* title = "Mini Renderer",
+		WindowProperties(const char* title = "Mini Renderer",
 			uint32_t width = 800,
 			uint32_t height = 600)
 			: Title(title), Width(width), Height(height) {}
@@ -23,10 +23,10 @@ namespace MiniRenderer
 	/// <summary>
 	/// Interface representing a desktop system based Window
 	/// </summary>
-	class Window
+	class MiniWindow
 	{
 	public:
-		virtual ~Window() {}
+		virtual ~MiniWindow() {}
 
 		virtual void OnUpdate() = 0;
 
@@ -39,6 +39,6 @@ namespace MiniRenderer
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
-		static std::unique_ptr<Window> Create(const WindowProperties& props = WindowProperties());
+		static std::unique_ptr<MiniWindow> Create(const WindowProperties& props = WindowProperties());
 	};
 }

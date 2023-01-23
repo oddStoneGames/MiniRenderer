@@ -1,3 +1,4 @@
+#ifdef WINDOWS
 #include "WindowsWindow.h"
 #include <tchar.h>
 
@@ -60,7 +61,7 @@ namespace MiniRenderer
 
 	}
 
-	std::unique_ptr<Window> Window::Create(const WindowProperties& props)
+	std::unique_ptr<MiniWindow> MiniWindow::Create(const WindowProperties& props)
 	{
 		return std::unique_ptr<WindowsWindow>(new WindowsWindow(props));
 	}
@@ -91,3 +92,4 @@ namespace MiniRenderer
 
 	}
 }
+#endif

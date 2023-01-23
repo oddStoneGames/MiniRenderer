@@ -39,15 +39,17 @@ namespace MiniRenderer
 	{
 		while (m_Running)
 		{
-			// TEMP!
-			if (!static_cast<WindowsWindow*>(m_Window->GetNativeWindow())->ProcessMessages())
-			{
-				std::cout << "Closing Window!\n";
-				m_Running = false;
-			}
+			m_Window->OnUpdate();
 
-			// Render
-			Sleep(10);
+			// // TEMP!
+			// if (!static_cast<WindowsWindow*>(m_Window->GetNativeWindow())->ProcessMessages())
+			// {
+			// 	std::cout << "Closing Window!\n";
+			// 	m_Running = false;
+			// }
+
+			// // Render
+			// Sleep(10);
 		}
 	}
 
@@ -66,7 +68,7 @@ int main()
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		throw std::runtime_error(e.what());
 		return EXIT_FAILURE;
 	}
 

@@ -5,7 +5,7 @@
 #ifdef WINDOWS
 	#include <WindowsWindow.h>
 #else
-	#include <LinuxWindows.h>
+	#include <LinuxWindow.h>
 #endif
 
 namespace MiniRenderer
@@ -22,10 +22,6 @@ namespace MiniRenderer
 		void Cleanup();
 	private:
 		bool m_Running = true;	// Tells if the Application is running.
-	#ifdef WINDOWS
-		std::unique_ptr<Window> m_Window;
-	#else
-		LinuxWindow m_Window;
-	#endif
+		std::unique_ptr<MiniWindow> m_Window;
 	};
 }
