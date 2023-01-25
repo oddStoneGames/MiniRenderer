@@ -61,7 +61,12 @@ namespace MiniRenderer
 
 	}
 
-	std::unique_ptr<MiniWindow> MiniWindow::Create(const WindowProperties& props)
+    void WindowsWindow::OnClose()
+    {
+		
+    }
+
+    std::unique_ptr<MiniWindow> MiniWindow::Create(const WindowProperties& props)
 	{
 		return std::unique_ptr<WindowsWindow>(new WindowsWindow(props));
 	}
@@ -85,11 +90,6 @@ namespace MiniRenderer
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 		m_Data.VSync = true;
-	}
-
-	void WindowsWindow::Shutdown()
-	{
-
 	}
 }
 #endif

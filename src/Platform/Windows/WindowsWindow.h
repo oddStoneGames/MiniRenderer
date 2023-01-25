@@ -15,9 +15,10 @@ namespace MiniRenderer
 		WindowsWindow(const WindowProperties& windowProps);
 		WindowsWindow(const WindowsWindow&) = delete;
 		WindowsWindow& operator =(const WindowsWindow&) = delete;
-		virtual ~WindowsWindow();
+		virtual ~WindowsWindow() {}
 
 		virtual void OnUpdate() override;
+		virtual void OnClose() override;
 
 		virtual uint32_t GetWidth() const override { return m_Data.Width; }
 		virtual uint32_t GetHeight() const override { return m_Data.Height; }
@@ -30,7 +31,6 @@ namespace MiniRenderer
 		bool ProcessMessages();
 	private:
 		void Init(const WindowProperties& props);
-		void Shutdown();
 	private:
 		HINSTANCE m_hInstance;
 		HWND m_hWnd;
