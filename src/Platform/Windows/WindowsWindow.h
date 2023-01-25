@@ -4,6 +4,9 @@
 #include "../../Core/Window.h"
 
 #include <Windows.h>
+#include <Windowsx.h>
+
+#include "../../Core/Events/EventHandler.h"
 
 namespace MiniRenderer
 {
@@ -27,13 +30,13 @@ namespace MiniRenderer
 		virtual void SetVSync(bool enabled) override { m_Data.VSync = enabled; }
 		virtual bool IsVSync() const override { return m_Data.VSync; }
 		inline virtual void* GetNativeWindow() const override { return (void*)this; }
-
-		bool ProcessMessages();
 	private:
 		void Init(const WindowProperties& props);
+		bool ProcessMessages();
 	private:
 		HINSTANCE m_hInstance;
 		HWND m_hWnd;
+		const TCHAR* m_Classname = TEXT("My Window");
 		struct WindowData
 		{
 			const char* Title;
