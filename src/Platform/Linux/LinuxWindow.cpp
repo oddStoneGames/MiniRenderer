@@ -102,6 +102,11 @@ namespace MiniRenderer
         }
     }
 
+    void LinuxWindow::Draw(const Framebuffer& framebuffer)
+    {
+
+    }
+
     void LinuxWindow::OnClose()
     {
         printf("Linux Window Shutting Down!");

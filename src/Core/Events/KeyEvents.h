@@ -14,7 +14,7 @@ namespace MiniRenderer
     public:
         KeyDownEvent() : Event<KeyEvents>(KeyEvents::KeyDown, "KeyDownEvent"){}
         virtual ~KeyDownEvent() = default;
-        int keycode;    // The ASCII of the key that was Pressed Down!
+        int keycode = -1;    // The ASCII of the key that was Pressed Down!
     };
 
     class KeyUpEvent : public Event<KeyEvents>
@@ -22,6 +22,6 @@ namespace MiniRenderer
     public:
         KeyUpEvent() : Event<KeyEvents>(KeyEvents::KeyUp, "KeyUpEvent"){}
         virtual ~KeyUpEvent() = default;
-        int keycode;    // The ASCII of the key that was Lifted Up!
+        int keycode = -1;    // The ASCII of the key that was Lifted Up!
     };
 }

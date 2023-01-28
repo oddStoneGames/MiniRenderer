@@ -21,27 +21,24 @@ namespace MiniRenderer
 		virtual ~WindowsWindow() {}
 
 		virtual void OnUpdate() override;
+		virtual void Draw(const Framebuffer& framebuffer) override;
 		virtual void OnClose() override;
 
 		virtual uint32_t GetWidth() const override { return m_Data.Width; }
 		virtual uint32_t GetHeight() const override { return m_Data.Height; }
-
-		// Window Attributes
-		virtual void SetVSync(bool enabled) override { m_Data.VSync = enabled; }
-		virtual bool IsVSync() const override { return m_Data.VSync; }
-		inline virtual void* GetNativeWindow() const override { return (void*)this; }
 	private:
-		void Init(const WindowProperties& props);
+		int Init(const WindowProperties& props);
 		bool ProcessMessages();
 	private:
 		HINSTANCE m_hInstance;
 		HWND m_hWnd;
+		HDC m_DeviceContext;
+		BITMAPINFO m_BitmapInfo;	// Struct for StretchDIBits.
 		const TCHAR* m_Classname = TEXT("My Window");
 		struct WindowData
 		{
 			const char* Title;
 			unsigned int Width, Height;
-			bool VSync;
 		}m_Data;
 	};
 }

@@ -5,16 +5,16 @@
 #include "KeyEvents.h"
 #include "MouseEvents.h"
 #include "WindowEvents.h"
+#include <memory>
 
 namespace MiniRenderer
 {
     class EventHandler
     {
     public:
-        static EventHandler* s_Instance;
-        static EventHandler* GetInstance() { if(!s_Instance) s_Instance = new EventHandler(); return s_Instance; }
         EventHandler() : WindowEventDispatcher(), MouseEventDispatcher(), KeyEventDispatcher() {}
-        ~EventHandler() { delete s_Instance; }
+        static EventHandler* GetInstance();
+
         // Window Events
         EventDispatcher<WindowEvents> WindowEventDispatcher;
         // Mouse Events
@@ -22,5 +22,6 @@ namespace MiniRenderer
         // Keyboard Events
         EventDispatcher<KeyEvents> KeyEventDispatcher;
     private:
+        static std::unique_ptr<EventHandler> s_Instance;
     };
 }

@@ -64,17 +64,19 @@ namespace MiniRenderer
 			WindowResizeEvent wr;
 			wr.width = LOWORD(lParam);	// Macro to get the low-order word.
 			wr.height = HIWORD(lParam); // Macro to get the high-order word.
+
+			// Send Resize Event.
 			EventHandler::GetInstance()->WindowEventDispatcher.SendEvent(wr);
 			break;
 		}
 		case WM_PAINT:
 		{
 			// Paint all the area again.
-			PAINTSTRUCT ps;
-			HDC hdc = BeginPaint(hWnd, &ps);
-			// All painting occurs here, between BeginPaint and EndPaint.
-			FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
-			EndPaint(hWnd, &ps);
+			//PAINTSTRUCT ps;
+			//HDC hdc = BeginPaint(hWnd, &ps);
+			//// All painting occurs here, between BeginPaint and EndPaint.
+			//FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
+			//EndPaint(hWnd, &ps);
 			break;
 		}
 		case WM_CLOSE:
@@ -87,7 +89,6 @@ namespace MiniRenderer
 		case WM_DESTROY:
 			return 0;
 		}
-
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 
@@ -95,39 +96,29 @@ namespace MiniRenderer
 		: m_hInstance(GetModuleHandle(nullptr))
 	{
 		Init(props);
-
-		WNDCLASS wndClass = {};
-		wndClass.lpszClassName = m_Classname;
-		wndClass.hInstance = m_hInstance;
-		wndClass.hIcon = LoadIcon(NULL, IDI_WINLOGO);
-		wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wndClass.lpfnWndProc = WindowProc;
-
-		DWORD style = WS_OVERLAPPEDWINDOW;
-
-		RECT rect;
-		rect.left = 250;
-		rect.bottom = 250;
-		rect.right = rect.left + m_Data.Width;
-		rect.top = rect.bottom + m_Data.Height;
-
-		// To make sure that our window size is the whole canvas and not the outer border.
-		AdjustWindowRect(&rect, style, false);
-
-		RegisterClass(&wndClass);
-
-		m_hWnd = CreateWindowEx(0, m_Classname, TEXT(m_Data.Title), style, rect.left, rect.bottom, rect.right - rect.left, rect.top - rect.bottom, NULL, NULL, m_hInstance, NULL);
-
-		ShowWindow(m_hWnd, SW_SHOW);
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
 		if (!ProcessMessages())	return;
-
-		// Render
-		Sleep(10);
 		return;
+	}
+
+	void WindowsWindow::Draw(const Framebuffer& framebuffer)
+	{
+		// Update Bitmap Width & Height to match screen height.
+		if (framebuffer.GetFramebufferWidth() != m_BitmapInfo.bmiHeader.biWidth || -framebuffer.GetFramebufferHeight() != m_BitmapInfo.bmiHeader.biHeight)
+		{
+			m_BitmapInfo.bmiHeader.biWidth = framebuffer.GetFramebufferWidth();
+			m_BitmapInfo.bmiHeader.biHeight = -framebuffer.GetFramebufferHeight();
+		}
+
+		int linesCopied = StretchDIBits(m_DeviceContext, 
+					  0, 0, framebuffer.GetFramebufferWidth(), framebuffer.GetFramebufferHeight(), // Destination Size.
+					  0, 0, framebuffer.GetFramebufferWidth(), framebuffer.GetFramebufferHeight(), // Source Size.
+					  (void *)framebuffer.colorBuffer, &m_BitmapInfo, DIB_RGB_COLORS, SRCCOPY);
+
+		//printf("Lines Copied: %d\n", linesCopied);
 	}
 
 	void WindowsWindow::OnClose()
@@ -156,12 +147,56 @@ namespace MiniRenderer
 		return true;
 	}
 
-	void WindowsWindow::Init(const WindowProperties& props)
+	int WindowsWindow::Init(const WindowProperties& props)
 	{
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
-		m_Data.VSync = true;
+
+		WNDCLASS wndClass = {};
+		wndClass.lpszClassName = m_Classname;
+		wndClass.hInstance = m_hInstance;
+		wndClass.hIcon = LoadIcon(NULL, IDI_WINLOGO);
+		wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wndClass.lpfnWndProc = WindowProc;
+
+		DWORD style = WS_OVERLAPPEDWINDOW;
+
+		RECT rect;
+		rect.left = 250;
+		rect.bottom = 250;
+		rect.right = rect.left + m_Data.Width;
+		rect.top = rect.bottom + m_Data.Height;
+
+		// To make sure that our window size is the whole canvas and not the outer border.
+		AdjustWindowRect(&rect, style, false);
+
+		// TODO: Move Everything to a FUNCTION
+		if (!RegisterClass(&wndClass))
+			return GetLastError();
+
+		m_Data.Width = rect.right - rect.left;
+		m_Data.Height = rect.top - rect.bottom;
+		printf("WIDTH & HEIGHT of Rect: %d\t%d\n", m_Data.Width, m_Data.Height);
+
+		m_hWnd = CreateWindowEx(0, m_Classname, TEXT(m_Data.Title), style, rect.left, rect.bottom, m_Data.Width, m_Data.Height, NULL, NULL, m_hInstance, NULL);
+
+		if (!m_hWnd)
+			return GetLastError();
+
+		// Set Bitmap info.
+		m_BitmapInfo.bmiHeader.biSize = sizeof(m_BitmapInfo.bmiHeader);
+		m_BitmapInfo.bmiHeader.biWidth = m_Data.Width;
+		// Negative height makes top left as the coordinate system origin for the DrawPixel function, otherwise its bottom left
+		m_BitmapInfo.bmiHeader.biHeight = -m_Data.Height;
+		m_BitmapInfo.bmiHeader.biPlanes = 1;
+		m_BitmapInfo.bmiHeader.biBitCount = 32;
+		m_BitmapInfo.bmiHeader.biCompression = BI_RGB;
+
+		m_DeviceContext = GetDC(m_hWnd);
+		ShowWindow(m_hWnd, SW_SHOW);
+
+		return 0;
 	}
 }
 #endif

@@ -2,11 +2,8 @@
 
 namespace MiniRenderer
 {
-	/// <summary>
-	/// Create the Window & Context.
-	/// </summary>
-	/// <param name="props">Window Properties</param>
-	Renderer::Renderer(const WindowProperties& props)
+	Renderer::Renderer(const WindowProperties& props, short unsigned int targetFPS, bool doubleBuffer)
+		: m_Swapchain(props.Width, props.Height), m_TargetFPS(targetFPS), m_DoubleBuffer(doubleBuffer)
 	{
 		m_Window = MiniWindow::Create(props);
 	}
@@ -23,9 +20,6 @@ namespace MiniRenderer
 		Cleanup();
 	}
 
-	/// <summary>
-	/// Initialize!
-	/// </summary>
 	void Renderer::Init()
 	{
 		// Add Listener of Events.
@@ -44,7 +38,102 @@ namespace MiniRenderer
 	{
 		while (m_Running)
 		{
+			// Window Update
 			m_Window->OnUpdate();
+
+			// Rendering.
+			if (m_TargetFPS > 0)
+			{
+				// Capped Rendering
+				if (m_WaitTime > 0.0f)
+				{
+					// Wait & Reduce the time we have waited for and then return.
+					long long timeNow = std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
+					float timeSinceWaiting = (float)(timeNow - m_TimeWhenWeStartedWaiting) / 1000.0f;
+
+					if (timeSinceWaiting >= m_WaitTime)
+					{
+						// Wait over we can start rendering again.
+						m_WaitTime = 0.0f;
+					}
+					else
+					{
+						// Wait.
+						continue;
+					}
+				}
+
+				// Clear Backbuffer.
+				m_Swapchain.backBuffer.Clear();
+
+				// Get Time before rendering.
+				auto timeBeforeRendering = std::chrono::high_resolution_clock::now();
+
+				// Render a Rectangle for example.
+				DrawRectangle();
+
+				// The Swapchain swaps the buffer if only our backbuffer is completed which we set manually.
+				m_Swapchain.SetBackbufferState(true);
+
+				// Swap the Buffers.
+				m_Swapchain.SwapBuffers(m_Window.get(), m_DoubleBuffer);
+
+				// Get Time after rendering.
+				auto timeAfterRendering = std::chrono::high_resolution_clock::now();
+
+				// Get the Time it took to render this frame in miliseconds.
+				long long start = std::chrono::time_point_cast<std::chrono::microseconds>(timeBeforeRendering).time_since_epoch().count();
+				long long end = std::chrono::time_point_cast<std::chrono::microseconds>(timeAfterRendering).time_since_epoch().count();
+				float frameTime = (float)(end - start) / 1000.0f;
+
+				// The Target Frame time.
+				float targetFrameTime = (1.0f / m_TargetFPS) * 1000.0f;
+
+				if (frameTime < targetFrameTime)
+				{
+					// We are faster than we are supposed to be so we should wait for some time.
+					m_WaitTime = targetFrameTime - frameTime;
+					m_TimeWhenWeStartedWaiting = end;
+				}
+				else
+				{
+					m_WaitTime = 0.0f;
+				}
+				
+				// Show FPS
+				// We waited for wait time to show this frame so the FPS should be calculated based upon (waittime + frametime)
+				float frameTimeToDisplay = m_WaitTime + frameTime;
+				float fpstoDisplay = (1.0f / frameTimeToDisplay) * 1000.0f;
+				printf("Frametime: %.2f ms\t FPS: %.2f\n", frameTimeToDisplay, fpstoDisplay);
+			}
+			else
+			{
+				// Uncapped Rendering.
+
+				// Clear Backbuffer.
+				m_Swapchain.backBuffer.Clear();
+
+				// Get Time before rendering.
+				auto timeBeforeRendering = std::chrono::high_resolution_clock::now();
+
+				// Do the rendering.
+				// For now lets Make a rectangle in the center of the screen.
+				DrawRectangle();
+
+				// Swap Buffers and Show the End Result to the screen.
+				m_Swapchain.SwapBuffers(m_Window.get(), m_DoubleBuffer);
+
+				// Get Time after rendering.
+				auto timeAfterRendering = std::chrono::high_resolution_clock::now();
+
+				// Get the Time it took to render this frame in miliseconds.
+				long long start = std::chrono::time_point_cast<std::chrono::microseconds>(timeBeforeRendering).time_since_epoch().count();
+				long long end = std::chrono::time_point_cast<std::chrono::microseconds>(timeAfterRendering).time_since_epoch().count();
+				float frameTime = (float)(end - start) / 1000.0f;
+				float fps = (1.0f / frameTime) * 1000.0f;
+
+				printf("Frametime: %.2f ms\t FPS: %.2f\n", frameTime, fps);
+			}
 		}
 	}
 
@@ -74,7 +163,7 @@ namespace MiniRenderer
 		{
 			// Mouse Moved Event.
 			const MouseMovedEvent& mm = static_cast<const MouseMovedEvent&>(e);
-			printf("Mouse Moved: %d\t%d\n", mm.x, mm.y);
+			//printf("Mouse Moved: %d\t%d\n", mm.x, mm.y);
 		}else if(e.GetType() == MouseEvents::MouseButtonDown)
 		{
 			// Mouse Button Down Event.
@@ -103,11 +192,32 @@ namespace MiniRenderer
 			printf("Key Up: %c\n", ku.keycode);
 		}
     }
+
+	void Renderer::DrawRectangle()
+	{
+		// Get the Middle of the Screen.
+		int framebufferWidth = m_Swapchain.backBuffer.GetFramebufferWidth();
+		int framebufferHeight = m_Swapchain.backBuffer.GetFramebufferHeight();
+		int midX = framebufferWidth * 0.5f;
+		int midY = framebufferHeight * 0.5f;
+
+		// Rectangle size is 20% of the window width & 10% of the window height.
+		int sizeX = framebufferWidth * 0.2f, sizeY = framebufferHeight * 0.1f;
+		int startingPixelX = midX - sizeX * 0.5f;
+		int startingPixelY = midY - sizeY * 0.5f;
+
+		// Send draw command for every pixel.
+		for (int x = startingPixelX; x <= startingPixelX + sizeX; x++)
+			for (int y = startingPixelY; y <= startingPixelY + sizeY; y++)
+				m_Swapchain.backBuffer.SetPixelColor(x, y, (y - x) * 0x00FFFF);
+	}
 }
 
 int main()
 {
 	MiniRenderer::Renderer renderer(MiniRenderer::WindowProperties{});
+	renderer.SetTargetFPS(60);	// Cap the FPS at 60 for testing.
+	renderer.EnableDoubleBuffers(false);	// You have the option to disable buffer swapping.
 	try
 	{
 		renderer.Run();

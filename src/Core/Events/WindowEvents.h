@@ -15,7 +15,7 @@ namespace MiniRenderer
     public:
         WindowResizeEvent() : Event<WindowEvents>(WindowEvents::WindowResize, "WindowResize") {}
         virtual ~WindowResizeEvent() {}
-        int width, height;  // New Width & Height.
+        int width = 0, height = 0;  // New Width & Height.
     };
 
     class WindowCloseEvent : public Event<WindowEvents>
