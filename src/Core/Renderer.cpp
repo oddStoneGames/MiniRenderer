@@ -1,4 +1,7 @@
 ﻿#include "Renderer.h"
+#include <chrono>		// For Time related queries.
+#include <stdlib.h>		// For EXIT_FAILURE & EXIT_SUCCESS.
+#include <stdexcept>	// For std::runtime_error().
 
 namespace MiniRenderer
 {
@@ -40,6 +43,9 @@ namespace MiniRenderer
 		{
 			// Window Update
 			m_Window->OnUpdate();
+
+			// It can be so that after window processes its update, we are not in running state.
+			if(!m_Running) break;
 
 			// Rendering.
 			if (m_TargetFPS > 0)
@@ -120,6 +126,9 @@ namespace MiniRenderer
 				// For now lets Make a rectangle in the center of the screen.
 				DrawRectangle();
 
+				// The Swapchain swaps the buffer if only our backbuffer is completed which we set manually.
+				m_Swapchain.SetBackbufferState(true);
+
 				// Swap Buffers and Show the End Result to the screen.
 				m_Swapchain.SwapBuffers(m_Window.get(), m_DoubleBuffer);
 
@@ -153,6 +162,7 @@ namespace MiniRenderer
 		{
 			// Window Close Event.
 			m_Window->OnClose();
+			// Set Running State to false.
 			m_Running = false;
 		}
     }
@@ -217,7 +227,7 @@ int main()
 {
 	MiniRenderer::Renderer renderer(MiniRenderer::WindowProperties{});
 	renderer.SetTargetFPS(60);	// Cap the FPS at 60 for testing.
-	renderer.EnableDoubleBuffers(false);	// You have the option to disable buffer swapping.
+	renderer.EnableDoubleBuffers(true);	// You have the option to disable buffer swapping.
 	try
 	{
 		renderer.Run();

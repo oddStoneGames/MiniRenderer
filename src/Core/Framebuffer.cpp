@@ -1,5 +1,7 @@
 #include "Framebuffer.h"
+#include <memory>
 #include <stdexcept>
+#include <cstring>
 
 namespace MiniRenderer
 {
@@ -11,7 +13,6 @@ namespace MiniRenderer
 
 	Framebuffer::~Framebuffer()
 	{
-		printf("Closing Framebuffer");
 		// Free the Memory allocated.
 		free(colorBuffer);
 		free(alphaBuffer);
@@ -19,8 +20,8 @@ namespace MiniRenderer
 
 	void Framebuffer::CopyBuffers(const Framebuffer& from)
 	{
-		memcpy(colorBuffer, from.colorBuffer, m_Width * m_Height * sizeof(uint32_t));
-		memcpy(alphaBuffer, from.alphaBuffer, m_Width * m_Height * sizeof(unsigned char));
+		std::memcpy(colorBuffer, from.colorBuffer, m_Width * m_Height * sizeof(uint32_t));
+		std::memcpy(alphaBuffer, from.alphaBuffer, m_Width * m_Height * sizeof(unsigned char));
 	}
 
 	void Framebuffer::SetFramebufferSize(int x, int y, int width, int height)

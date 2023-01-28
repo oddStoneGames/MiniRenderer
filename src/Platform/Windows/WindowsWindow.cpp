@@ -1,5 +1,6 @@
 #ifdef WINDOWS
 #include "WindowsWindow.h"
+#include <Windowsx.h>
 #include <tchar.h>
 
 namespace MiniRenderer

@@ -1,6 +1,3 @@
-#include <stdlib.h>		// For EXIT_FAILURE & EXIT_SUCCESS
-#include <stdexcept>	// For std::runtime_error()
-
 #ifdef WINDOWS
 	#include <WindowsWindow.h>
 #else
@@ -9,7 +6,6 @@
 
 #include "Events/EventHandler.h"
 #include "Swapchain.h"
-#include <chrono>
 
 namespace MiniRenderer
 {

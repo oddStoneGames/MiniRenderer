@@ -28,7 +28,6 @@ namespace MiniRenderer
 			// Show Backbuffer to the window.
 			window->Draw(backBuffer);
 		}
-
 	}
 
 	void Swapchain::OnWindowEvent(const Event<WindowEvents>& event)

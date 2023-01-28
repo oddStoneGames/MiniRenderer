@@ -2,11 +2,8 @@
 
 #pragma once
 #include "../../Core/Window.h"
-
-#include <Windows.h>
-#include <Windowsx.h>
-
 #include "../../Core/Events/EventHandler.h"
+#include <Windows.h>
 
 namespace MiniRenderer
 {
