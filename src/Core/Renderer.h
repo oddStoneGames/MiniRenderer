@@ -46,6 +46,9 @@ namespace MiniRenderer
 
 		/// @brief Draws a Rectangle to the backbuffer.
 		void DrawRectangle();
+
+		/// @brief Draws some lines.
+		void DrawLines();
 	private:
 		/// @brief Tells if the Application is running.
 		bool m_Running = true;
@@ -60,7 +63,7 @@ namespace MiniRenderer
 		std::unique_ptr<MiniWindow> m_Window;
 
 		/// @brief Used for swapping the buffers to avoid screen tearing.
-		Swapchain m_Swapchain; 
+		Swapchain m_Swapchain;
 
 		/// @brief To ensure that we don't render another frame instantly if we are capping FPS.
 		float m_WaitTime = 0.0f;

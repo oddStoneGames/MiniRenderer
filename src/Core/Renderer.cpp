@@ -1,4 +1,6 @@
 ﻿#include "Renderer.h"
+#include "LineRenderer.h"
+
 #include <chrono>		// For Time related queries.
 #include <stdlib.h>		// For EXIT_FAILURE & EXIT_SUCCESS.
 #include <stdexcept>	// For std::runtime_error().
@@ -78,6 +80,9 @@ namespace MiniRenderer
 				// Render a Rectangle for example.
 				DrawRectangle();
 
+				// Render a line.
+				DrawLines();
+
 				// The Swapchain swaps the buffer if only our backbuffer is completed which we set manually.
 				m_Swapchain.SetBackbufferState(true);
 
@@ -122,9 +127,11 @@ namespace MiniRenderer
 				// Get Time before rendering.
 				auto timeBeforeRendering = std::chrono::high_resolution_clock::now();
 
-				// Do the rendering.
-				// For now lets Make a rectangle in the center of the screen.
+				// Draw rectangle in the center of the screen.
 				DrawRectangle();
+
+				// Render Line.
+				DrawLines();
 
 				// The Swapchain swaps the buffer if only our backbuffer is completed which we set manually.
 				m_Swapchain.SetBackbufferState(true);
@@ -221,13 +228,26 @@ namespace MiniRenderer
 			for (int y = startingPixelY; y <= startingPixelY + sizeY; y++)
 				m_Swapchain.backBuffer.SetPixelColor(x, y, (y - x) * 0x00FFFF);
 	}
+
+	void Renderer::DrawLines()
+	{
+		int bufferWidth = m_Swapchain.backBuffer.GetFramebufferWidth();
+		int bufferHeight = m_Swapchain.backBuffer.GetFramebufferHeight();
+		int midPointX = bufferWidth * 0.5f;
+		int midPointY = bufferHeight * 0.5f;
+
+		DrawLine(0, 0, midPointX, midPointY, 0xFF5516, m_Swapchain.backBuffer);
+		DrawLine(bufferWidth, 0, midPointX, midPointY, 0x40EA76, m_Swapchain.backBuffer);
+		DrawLine(0, bufferHeight, midPointX, midPointY, 0x40DBEA, m_Swapchain.backBuffer);
+		DrawLine(bufferWidth, bufferHeight, midPointX, midPointY, 0xC0AA0B, m_Swapchain.backBuffer);
+	}
 }
 
 int main()
 {
 	MiniRenderer::Renderer renderer(MiniRenderer::WindowProperties{});
 	renderer.SetTargetFPS(60);	// Cap the FPS at 60 for testing.
-	renderer.EnableDoubleBuffers(true);	// You have the option to disable buffer swapping.
+	renderer.EnableDoubleBuffers(false);	// You have the option to disable buffer swapping.
 	try
 	{
 		renderer.Run();

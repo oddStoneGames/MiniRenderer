@@ -35,7 +35,6 @@ namespace MiniRenderer
 		if (m_Initialized)
 		{
 			// If Buffers were already initialized once, we only need to resize them.
-
 			uint32_t* cB = (uint32_t*)realloc(colorBuffer, m_Width * m_Height * sizeof(uint32_t));
 			if (cB == nullptr)
 				throw std::runtime_error("Failed to resize color buffer.");
@@ -83,9 +82,17 @@ namespace MiniRenderer
 
 	void Framebuffer::SetPixelColor(int x, int y, uint32_t color, unsigned char alpha)
 	{
+		// Return if the x & y values are out of bounds.
+		if (x > m_Width || x < 0 || y < 0 || y >= m_Height) return;
+
+		// Pixel at (x,y).
+		int position = y * m_Width + x;
+
+		// If Position is out of bounds, then return.
+		if (position > m_Width * m_Height) return;
+
 		uint32_t* pixel = colorBuffer; // Get Color of the pixel at (0,0).
 		unsigned char* alphaValue = alphaBuffer; // Get Alpha value of the pixel at (0,0).
-		int position = y * m_Width + x; // Pixel at (x,y).
 
 		// Goto the pixel at (x,y) in our color & alpha buffer and set the values to the given one.
 		pixel += position;
