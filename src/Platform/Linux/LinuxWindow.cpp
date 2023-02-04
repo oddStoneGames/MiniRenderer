@@ -15,7 +15,7 @@ namespace MiniRenderer
 
     std::unique_ptr<MiniWindow> MiniWindow::Create(const WindowProperties& props)
 	{
-		return std::unique_ptr<LinuxWindow>(new LinuxWindow(props));
+		return std::make_unique<LinuxWindow>(props);
 	}
 
     void LinuxWindow::OnUpdate()

@@ -1,5 +1,6 @@
 ﻿#include "Renderer.h"
 #include "LineRenderer.h"
+#include "TriangleRenderer.h"
 
 #include <chrono>		// For Time related queries.
 #include <stdlib.h>		// For EXIT_FAILURE & EXIT_SUCCESS.
@@ -80,8 +81,12 @@ namespace MiniRenderer
 				// Render a Rectangle for example.
 				DrawRectangle();
 
-				// Render a line.
+				// Render a Line.
 				DrawLines();
+
+				// Render a Triangle.
+				Vec2i points[3] = { Vec2i(40, 200), Vec2i(80, 120), Vec2i(120, 200) };
+				DrawTriangle(points, 0x069C4F, m_Swapchain.backBuffer);
 
 				// The Swapchain swaps the buffer if only our backbuffer is completed which we set manually.
 				m_Swapchain.SetBackbufferState(true);
@@ -132,6 +137,10 @@ namespace MiniRenderer
 
 				// Render Line.
 				DrawLines();
+
+				// Render a Triangle.
+				Vec2i points[3] = { Vec2i(40, 200), Vec2i(80, 120), Vec2i(120, 200) };
+				DrawTriangle(points, 0x069C4F, m_Swapchain.backBuffer);
 
 				// The Swapchain swaps the buffer if only our backbuffer is completed which we set manually.
 				m_Swapchain.SetBackbufferState(true);
@@ -247,7 +256,7 @@ int main()
 {
 	MiniRenderer::Renderer renderer(MiniRenderer::WindowProperties{});
 	renderer.SetTargetFPS(60);	// Cap the FPS at 60 for testing.
-	renderer.EnableDoubleBuffers(false);	// You have the option to disable buffer swapping.
+	renderer.EnableDoubleBuffers(true);	// You have the option to disable buffer swapping.
 	try
 	{
 		renderer.Run();

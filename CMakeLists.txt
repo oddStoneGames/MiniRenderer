@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.6)
 
-set(CMAKE_CXX_STANDARD_REQUIRED 11)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(MiniRenderer)
 
@@ -20,7 +22,9 @@ set(SOURCE_FILES src/Core/Renderer.cpp src/Core/Renderer.h src/Core/Window.h
                  src/Core/Events/WindowEvents.h src/Core/Events/EventHandler.h src/Core/Events/EventHandler.cpp
                  src/Core/Framebuffer.cpp src/Core/Framebuffer.h
                  src/Core/Swapchain.cpp src/Core/Swapchain.h
+                 src/Core/Maths.h
                  src/Core/LineRenderer.h
+                 src/Core/TriangleRenderer.h
                  src/Platform/Windows/WindowsWindow.h src/Platform/Windows/WindowsWindow.cpp
                  src/Platform/Linux/LinuxWindow.h src/Platform/Linux/LinuxWindow.cpp)
 

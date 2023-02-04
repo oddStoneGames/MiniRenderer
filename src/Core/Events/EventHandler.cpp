@@ -7,7 +7,7 @@ namespace MiniRenderer
     EventHandler* EventHandler::GetInstance()
     {
         if (!s_Instance)
-            s_Instance = std::unique_ptr<EventHandler>(new EventHandler());
+            s_Instance = std::make_unique<EventHandler>();
 
         return s_Instance.get();
     }

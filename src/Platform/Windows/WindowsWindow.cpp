@@ -132,7 +132,7 @@ namespace MiniRenderer
 
 	std::unique_ptr<MiniWindow> MiniWindow::Create(const WindowProperties& props)
 	{
-		return std::unique_ptr<WindowsWindow>(new WindowsWindow(props));
+		return std::make_unique<WindowsWindow>(props);
 	}
 
 	bool WindowsWindow::ProcessMessages()
