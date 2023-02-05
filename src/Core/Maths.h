@@ -10,9 +10,9 @@ namespace MiniRenderer
 		T x, y;
 		Vector2() : x(0), y(0) {}
 		Vector2(T x, T y) { this->x = x; this->y = y; }
-		inline Vector2<T> operator +(const Vector2<T>& V) const { return Vector2<T>(u + V.u, v + V.v); }
-		inline Vector2<T> operator -(const Vector2<T>& V) const { return Vector2<T>(u - V.u, v - V.v); }
-		inline Vector2<T> operator *(float f)          const { return Vector2<T>(u * f, v * f); }
+		inline Vector2<T> operator +(const Vector2<T>& V) const { return Vector2<T>(x + V.x, y + V.y); }
+		inline Vector2<T> operator -(const Vector2<T>& V) const { return Vector2<T>(x - V.x, y - V.y); }
+		inline Vector2<T> operator *(float f)          const { return Vector2<T>(x * f, y * f); }
 		float mag() const { return std::sqrt(x * x + y * y); }
 		Vector2<T>& normalize(T l = 1) { *this = (*this) * (l / mag()); return *this; }
 		template <class > friend std::ostream& operator<<(std::ostream& s, Vector2<T>& v);
@@ -69,19 +69,22 @@ namespace MiniRenderer
 	template<class T>
 	inline Vector2<T>& Dot(Vector2<T>& v, Vector2<T>& u)
 	{
-		return Vector2<T>(v.x * u.x, v.y * u.y);
+		const Vector2<T>& dot = Vector2<T>(v.x * u.x, v.y * u.y);
+		return dot;
 	}
 
 	template<class T>
-	inline Vector3<T>& Dot(Vector3<T>& v, Vector3<T>& u)
+	inline const Vector3<T>& Dot(const Vector3<T>& v, const Vector3<T>& u)
 	{
-		return Vector3<T>(v.x * u.x, v.y * u.y, v.z * u.z);
+		const Vector3<T> dot = Vector3<T>(v.x * u.x, v.y * u.y, v.z * u.z);
+		return dot;
 	}
 
 	template<class T>
-	inline Vector3<T>& Cross(Vector3<T>& v, Vector3<T>& u)
+	inline const Vector3<T>& Cross(const Vector3<T>& v, const Vector3<T>& u)
 	{
-		return Vector3<T>(v.y * u.z - v.z * u.y, v.z * u.x - v.x * u.z, v.x * u.y - v.y * u.x);
+		const Vector3<T>& cross = Vector3<T>(v.y * u.z - v.z * u.y, v.z * u.x - v.x * u.z, v.x * u.y - v.y * u.x);
+		return cross;
 	}
 
 }
