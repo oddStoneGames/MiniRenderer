@@ -1,4 +1,4 @@
-#ifndef WINDOWS
+#ifndef PLATFORM_WINDOWS
 
 #include "LinuxWindow.h"
 #include <X11/Xutil.h>

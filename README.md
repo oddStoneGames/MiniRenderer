@@ -16,7 +16,7 @@ cmake -S . -B ./bin
   
 For Linux  
 ```  
-cmake -S . -B ./bin -DWINDOWS=OFF
+cmake -S . -B ./bin -DPLATFORM_WINDOWS=OFF
 ```  
 
 ## Snapshots   

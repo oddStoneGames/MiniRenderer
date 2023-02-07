@@ -1,4 +1,4 @@
-#ifdef WINDOWS
+#ifdef PLATFORM_WINDOWS
 
 #pragma once
 #include "../../Core/Window.h"

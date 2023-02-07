@@ -49,10 +49,8 @@ namespace MiniRenderer
 	typedef Vector3<float> Vec3;
 	typedef Vector3<int>   Vec3i;
 
-	inline float Abs(float value)
-	{ 
-		return value < 0.0f ? value * -1.0f : value; 
-	}
+	inline int Abs(int value) { return value < 0 ? value * -1 : value; }
+	inline float Abs(float value) { return value < 0.0f ? value * -1.0f : value; }
 
 	template<class T>
 	inline T Min(T a, T b)

@@ -1,4 +1,4 @@
-#ifndef WINDOWS
+#ifndef PLATFORM_WINDOWS
 
 #pragma once
 #include <X11/Xlib.h>

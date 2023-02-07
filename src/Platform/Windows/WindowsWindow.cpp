@@ -1,4 +1,4 @@
-#ifdef WINDOWS
+#ifdef PLATFORM_WINDOWS
 #include "WindowsWindow.h"
 #include <Windowsx.h>
 #include <tchar.h>

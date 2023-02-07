@@ -1,4 +1,4 @@
-#ifdef WINDOWS
+#ifdef PLATFORM_WINDOWS
 	#include <WindowsWindow.h>
 #else
 	#include <LinuxWindow.h>
@@ -6,6 +6,7 @@
 
 #include "Events/EventHandler.h"
 #include "Swapchain.h"
+#include "Model.h"
 
 namespace MiniRenderer
 {
@@ -70,5 +71,8 @@ namespace MiniRenderer
 
 		/// @brief The Time at which we started waiting.
 		long long m_TimeWhenWeStartedWaiting = 0;
+
+		/// @brief Test Model.
+		Model m_TestModel;
 	};
 }

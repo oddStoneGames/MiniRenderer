@@ -9,7 +9,7 @@
 namespace MiniRenderer
 {
 	Renderer::Renderer(const WindowProperties& props, short unsigned int targetFPS, bool doubleBuffer)
-		: m_Swapchain(props.Width, props.Height), m_TargetFPS(targetFPS), m_DoubleBuffer(doubleBuffer)
+		: m_Swapchain(props.Width, props.Height), m_TargetFPS(targetFPS), m_DoubleBuffer(doubleBuffer), m_TestModel(PROJECT_DIR"/src/Assets/pyramid.obj")
 	{
 		m_Window = MiniWindow::Create(props);
 	}
@@ -79,14 +79,17 @@ namespace MiniRenderer
 				auto timeBeforeRendering = std::chrono::high_resolution_clock::now();
 
 				// Render a Rectangle for example.
-				DrawRectangle();
+				//DrawRectangle();
 
-				// Render a Line.
-				DrawLines();
+				//// Render a Line.
+				//DrawLines();
 
-				// Render a Triangle.
-				Vec2i points[3] = { Vec2i(40, 200), Vec2i(80, 120), Vec2i(120, 200) };
-				DrawTriangle(points, 0x069C4F, m_Swapchain.backBuffer);
+				//// Render a Triangle.
+				//Vec2i points[3] = { Vec2i(40, 200), Vec2i(80, 120), Vec2i(120, 200) };
+				//DrawTriangle(points, 0x069C4F, m_Swapchain.backBuffer);
+
+				// Render Wireframe model.
+				m_TestModel.DrawWireframe(m_Swapchain.backBuffer);
 
 				// The Swapchain swaps the buffer if only our backbuffer is completed which we set manually.
 				m_Swapchain.SetBackbufferState(true);
