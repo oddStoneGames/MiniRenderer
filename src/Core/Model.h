@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Maths.h"
+#include "Maths/Maths.h"
 #include "Framebuffer.h"
 #include <vector>
 #include <string>
@@ -10,13 +10,13 @@ namespace MiniRenderer
 	/// @brief Has all the vertex data from the model file.
 	struct Mesh
 	{
-		std::vector<Vec3> vertices;	// Vertices
+		std::vector<Vec3f> vertices;	// Vertices
 		uint32_t nVertices;	// Number of Vertices
 		std::vector<unsigned int> faces;	// Faces
 		uint32_t nFaces;	// Number of Faces
 
 		Mesh() : vertices(), nVertices(0), faces(), nFaces(0) {}
-		Mesh(std::vector<Vec3> verts, uint32_t nVerts, std::vector<unsigned int> f, uint32_t nF) : vertices(verts), nVertices(nVerts), faces(f), nFaces(nF) {}
+		Mesh(std::vector<Vec3f> verts, uint32_t nVerts, std::vector<unsigned int> f, uint32_t nF) : vertices(verts), nVertices(nVerts), faces(f), nFaces(nF) {}
 	};
 
 	/// @brief Has all Mesh, texture & material data.

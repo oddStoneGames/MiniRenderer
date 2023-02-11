@@ -3,6 +3,7 @@
 bin/
 CMakeFiles/
 Debug/
+Release/
 MiniRenderer.dir/
 x64/
 
@@ -12,4 +13,5 @@ x64/
 *.filters
 *.cmake
 *.sln
+*.exe
 CMakeCache.txt

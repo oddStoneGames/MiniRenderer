@@ -1,6 +1,6 @@
 // Renders a line based on Bresenham's Line Rendering algorithm
 #pragma once
-#include "Maths.h"
+#include "Maths/Maths.h"
 #include "Framebuffer.h"
 #include <stdint.h>
 #include <utility>
