@@ -3,14 +3,13 @@
 
 // SSE 4.2
 #include <nmmintrin.h>
-#include <cmath>
 #include <assert.h>
 #include <sstream>
 #include <ostream>
 
 namespace MiniRenderer
-{	
-	#pragma region Vector2
+{
+#pragma region Vector2
 
 	// Vector 2 Class
 	// Since __m64 is deprecated in x64 program we use scalar.
@@ -20,7 +19,7 @@ namespace MiniRenderer
 		Vector2() : x(0), y(0) {}
 		Vector2(T _x) : x(_x), y(_x) {}
 		Vector2(T _x, T _y) : x(_x), y(_y) {}
-		
+
 		// Arithmetic Operators with float
 		inline Vector2<T> operator *(float f) const { return Vector2<T>(x * f, y * f); }
 		inline Vector2<T> operator /(float f) const { assert(f == 0.0f); return Vector2<T>(x / f, y / f); }
@@ -40,10 +39,10 @@ namespace MiniRenderer
 		inline const Vector2<T>& operator -=(const Vector2<T>& v) { x -= v.x; y -= v.y; return *this; }
 		inline const Vector2<T>& operator *=(const Vector2<T>& v) { x *= v.x; y *= v.y; return *this; }
 		inline const Vector2<T>& operator /=(const Vector2<T>& v) { assert(v.length() == 0.0f); x /= v.x; y /= v.y; return *this; }
-		
+
 		// Subscript/Array Index Operator
 		inline T& operator[](int index) const { assert(index < 0 || index >= 2); return (&x)[index]; }
-		
+
 		/// @brief Returns the Length of this Vector2.
 		inline float length() const { return std::sqrt(x * x + y * y); }
 
@@ -82,9 +81,9 @@ namespace MiniRenderer
 	/// @brief Two integer values.
 	typedef Vector2<int>   Vec2i;
 
-	#pragma endregion
+#pragma endregion
 
-	#pragma region Vec3i
+#pragma region Vec3i
 
 	// SSE 4.2 Vector3 Integer
 #ifdef __GNUC__
@@ -102,17 +101,17 @@ namespace MiniRenderer
 		// Arithmetic Operators with float
 		inline Vec3i operator*(const int b) const { return _mm_mul_epi32(_mValue, _mm_set1_epi32(b)); }
 		inline Vec3i operator/(const int b) const { assert(b == 0); return _mm_castps_si128(_mm_div_ps(_mm_castsi128_ps(_mValue), _mm_set1_ps(b))); }
-		
+
 		// Arithmetic Assignment Operators with float
 		inline const Vec3i& operator*=(const int b) { _mValue = _mm_mul_epi32(_mValue, _mm_set1_epi32(b)); return *this; }
 		inline const Vec3i& operator/=(const int b) { assert(b == 0); _mValue = _mm_castps_si128(_mm_div_ps(_mm_castsi128_ps(_mValue), _mm_set1_ps(b))); return *this; }
-		
+
 		// Arithmetic Operators
 		inline Vec3i operator+(const Vec3i& b) const { return _mm_add_epi32(_mValue, b._mValue); }
 		inline Vec3i operator-(const Vec3i& b) const { return _mm_sub_epi32(_mValue, b._mValue); }
 		inline Vec3i operator*(const Vec3i& b) const { return _mm_mul_epi32(_mValue, b._mValue); }
 		inline Vec3i operator/(const Vec3i& b) const { assert(b.length() == 0); return _mm_castps_si128(_mm_div_ps(_mm_castsi128_ps(_mValue), _mm_castsi128_ps(b._mValue))); }
-		
+
 		// Arithmetic Assignment Operators
 		inline const Vec3i& operator+=(const Vec3i& b) { _mValue = _mm_add_epi32(_mValue, b._mValue); return *this; }
 		inline const Vec3i& operator-=(const Vec3i& b) { _mValue = _mm_sub_epi32(_mValue, b._mValue); return *this; }
@@ -121,7 +120,7 @@ namespace MiniRenderer
 
 		// Subscript/Array Index Operator
 		inline int& operator[](int index) { assert(index < 0 || index >= 3); return (&x)[index]; }
-		
+
 		// Returns the Length of this Vector.
 		inline float length() const { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(_mm_castsi128_ps(_mValue), _mm_castsi128_ps(_mValue), 0x71))); }
 
@@ -146,8 +145,8 @@ namespace MiniRenderer
 		inline void operator delete[](void* x) { if (x) _aligned_free(x); }
 #endif
 
-		// Member Variables
-		union
+			// Member Variables
+			union
 		{
 			struct { int x, y, z; };
 			__m128i _mValue;
@@ -155,7 +154,7 @@ namespace MiniRenderer
 	};
 
 	/// @brief Returns the Dot Product of integer vectors a & b.
-	inline float Dot(const Vec3i& a, const Vec3i& b) 
+	inline float Dot(const Vec3i& a, const Vec3i& b)
 	{
 		return _mm_cvtss_f32(_mm_dp_ps(_mm_castsi128_ps(a._mValue), _mm_castsi128_ps(b._mValue), 0x71));
 	}
@@ -163,15 +162,29 @@ namespace MiniRenderer
 	/// @brief Returns the Cross Product of integer vectors a & b.
 	inline const Vec3i& Cross(const Vec3i& a, const Vec3i& b)
 	{
+		// Returns a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x
+
+		/*__m128 _mm_shuffle_ps(__m128 lo, __m128 hi, _MM_SHUFFLE(hi3, hi2, lo1, lo0))
+		* Interleave inputs into low 2 floats and high 2 floats of output. Basically
+		*   out[0]=lo[lo0];
+		*   out[1]=lo[lo1];
+		*   out[2]=hi[hi2];
+		*   out[3]=hi[hi3];
+		* For example, _mm_shuffle_ps(a,a,_MM_SHUFFLE(i,i,i,i)) copies the float a[i] into all 4 output floats.
+		*/
+
+		// _mm_castps_si128 - Reinterprets the four single precision floating point values in a as four 32-bit integers, and vice versa. 
+		// No conversion is performed.Does not map to any assembly instructions.
+
 		return  _mm_castps_si128(_mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(_mm_castsi128_ps(a._mValue), _mm_castsi128_ps(a._mValue), _MM_SHUFFLE(3, 0, 2, 1)),
-				_mm_shuffle_ps(_mm_castsi128_ps(b._mValue), _mm_castsi128_ps(b._mValue), _MM_SHUFFLE(3, 1, 0, 2))),
-				_mm_mul_ps(_mm_shuffle_ps(_mm_castsi128_ps(a._mValue), _mm_castsi128_ps(a._mValue), _MM_SHUFFLE(3, 1, 0, 2)),
+			_mm_shuffle_ps(_mm_castsi128_ps(b._mValue), _mm_castsi128_ps(b._mValue), _MM_SHUFFLE(3, 1, 0, 2))),
+			_mm_mul_ps(_mm_shuffle_ps(_mm_castsi128_ps(a._mValue), _mm_castsi128_ps(a._mValue), _MM_SHUFFLE(3, 1, 0, 2)),
 				_mm_shuffle_ps(_mm_castsi128_ps(b._mValue), _mm_castsi128_ps(b._mValue), _MM_SHUFFLE(3, 0, 2, 1)))));
 	}
 
-	#pragma endregion
+#pragma endregion
 
-	#pragma region Vec3f
+#pragma region Vec3f
 
 	// SSE 4.2 Vector3 Float
 #ifdef __GNUC__
@@ -229,8 +242,8 @@ namespace MiniRenderer
 		inline void operator delete[](void* x) { if (x) _aligned_free(x); }
 #endif
 
-		// Member Variables
-		union
+			// Member Variables
+			union
 		{
 			struct { float x, y, z; };
 			__m128 _mValue;
@@ -246,13 +259,97 @@ namespace MiniRenderer
 	/// @brief Returns the Cross Product of floating point vectors a & b.
 	inline const Vec3f& Cross(const Vec3f& a, const Vec3f& b)
 	{
+		// Returns a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x
+
+		/*__m128 _mm_shuffle_ps(__m128 lo, __m128 hi, _MM_SHUFFLE(hi3, hi2, lo1, lo0))
+		* Interleave inputs into low 2 floats and high 2 floats of output. Basically
+		*   out[0]=lo[lo0];
+		*   out[1]=lo[lo1];
+		*   out[2]=hi[hi2];
+		*   out[3]=hi[hi3];
+		* For example, _mm_shuffle_ps(a,a,_MM_SHUFFLE(i,i,i,i)) copies the float a[i] into all 4 output floats.
+		*/
 		return _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(a._mValue, a._mValue, _MM_SHUFFLE(3, 0, 2, 1)),
-			   _mm_shuffle_ps(b._mValue, b._mValue, _MM_SHUFFLE(3, 1, 0, 2))),
-			   _mm_mul_ps(_mm_shuffle_ps(a._mValue, a._mValue, _MM_SHUFFLE(3, 1, 0, 2)),
-			   _mm_shuffle_ps(b._mValue, b._mValue, _MM_SHUFFLE(3, 0, 2, 1))));
+			_mm_shuffle_ps(b._mValue, b._mValue, _MM_SHUFFLE(3, 1, 0, 2))),
+			_mm_mul_ps(_mm_shuffle_ps(a._mValue, a._mValue, _MM_SHUFFLE(3, 1, 0, 2)),
+				_mm_shuffle_ps(b._mValue, b._mValue, _MM_SHUFFLE(3, 0, 2, 1))));
 	}
 
-	#pragma endregion
+#pragma endregion
+
+#pragma region Vec4f
+
+	// SSE 4.2 Vector4 Float
+#ifdef __GNUC__
+	struct __attribute__((aligned(16))) Vec4f
+#else
+	_MM_ALIGN16 struct Vec4f		//__declspec(align(16))
+#endif
+	{
+		// Constructor
+		Vec4f() : _mValue(_mm_setzero_ps()) {}
+		Vec4f(float x) : _mValue(_mm_set_ps(x, x, x, x)) {}
+		Vec4f(float x, float y, float z, float w) : _mValue(_mm_set_ps(w, z, y, x)) {}
+		Vec4f(__m128 m) : _mValue(m) {}
+
+		// Arithmetic Operators with float
+		inline Vec4f operator*(const float b) const { return _mm_mul_ps(_mValue, _mm_set1_ps(b)); }
+		inline Vec4f operator/(const float b) const { assert(b == 0.0f); return _mm_div_ps(_mValue, _mm_set1_ps(b)); }
+
+		// Arithmetic Assignment Operators with float
+		inline const Vec4f& operator*=(const float b) { _mValue = _mm_mul_ps(_mValue, _mm_set1_ps(b)); return *this; }
+		inline const Vec4f& operator/=(const float b) { assert(b == 0.0f); _mValue = _mm_div_ps(_mValue, _mm_set1_ps(b)); return *this; }
+
+		// Arithmetic Operators
+		inline Vec4f operator+(const Vec4f& b) const { return _mm_add_ps(_mValue, b._mValue); }
+		inline Vec4f operator-(const Vec4f& b) const { return _mm_sub_ps(_mValue, b._mValue); }
+		inline Vec4f operator*(const Vec4f& b) const { return _mm_mul_ps(_mValue, b._mValue); }
+		inline Vec4f operator/(const Vec4f& b) const { assert(b.length() == 0.0f); return _mm_div_ps(_mValue, b._mValue); }
+
+		// Arithmetic Assignment Operators
+		inline const Vec4f& operator+=(const Vec4f& b) { _mValue = _mm_add_ps(_mValue, b._mValue); return *this; }
+		inline const Vec4f& operator-=(const Vec4f& b) { _mValue = _mm_sub_ps(_mValue, b._mValue); return *this; }
+		inline const Vec4f& operator*=(const Vec4f& b) { _mValue = _mm_mul_ps(_mValue, b._mValue); return *this; }
+		inline const Vec4f& operator/=(const Vec4f& b) { assert(b.length() == 0.0f); _mValue = _mm_div_ps(_mValue, b._mValue); return *this; }
+
+		// Subscript/Array Index Operator
+		inline float& operator[](int index) { assert(index < 0 || index >= 4); return (&x)[index]; }
+
+		// Returns the Length of this Vector.
+		inline float length() const { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(_mValue, _mValue, 0xF1))); }
+
+		// Scales this vector to unit length and then returns it as reference.
+		inline const Vec4f& normalize() { _mValue = _mm_mul_ps(_mValue, _mm_rsqrt_ps(_mm_dp_ps(_mValue, _mValue, 0xFF))); return *this; }
+
+		/// @brief Returns the contents of this vector as a string.
+		const inline std::string toString() const
+		{
+			std::ostringstream ss;
+			ss << "(" << x << ", " << y << ", " << z << ", " << w << ")\n";
+			return ss.str();
+		}
+
+		// Overload operators for enforcing correct alignment.
+#ifdef PLATFORM_WINDOWS
+		inline void* operator new[](size_t x) { return _aligned_malloc(x, 16); }
+		inline void operator delete[](void* x) { if (x) _aligned_free(x); }
+#endif
+
+			// Member Variables
+			union
+		{
+			struct { float x, y, z, w; };
+			__m128 _mValue;
+		};
+	};
+
+	/// @brief Returns the Dot Product of two floating point vectors a & b.
+	inline float Dot(const Vec4f& a, const Vec4f& b)
+	{
+		return _mm_cvtss_f32(_mm_dp_ps(a._mValue, b._mValue, 0xF1));
+	}
+
+#pragma endregion
 }
 
 #endif // VECTOR_H
