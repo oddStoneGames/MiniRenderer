@@ -4,8 +4,6 @@
 #include "Vector.h"
 #include "Matrix.h"
 
-#include <cmath>
-
 namespace MiniRenderer
 {
 	inline int Abs(int value) { return value < 0 ? value * -1 : value; }

@@ -3,6 +3,7 @@
 
 // SSE 4.2
 #include <nmmintrin.h>
+#include <cmath>
 #include <assert.h>
 #include <sstream>
 #include <ostream>
