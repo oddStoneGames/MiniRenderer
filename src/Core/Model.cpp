@@ -24,8 +24,8 @@ namespace MiniRenderer
 		{
 			for (int j = 0; j < 3; j++)
 			{
-				Vec3f v0 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + j] - 1];
-				Vec3f v1 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + (j + 1) % 3] - 1];
+				Vec3 v0 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + j] - 1];
+				Vec3 v1 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + (j + 1) % 3] - 1];
 				int x0 = (v0.x + 1.0f) * bufferWidth / 4.0f;
 				int y0 = (v0.y + 1.0f) * bufferHeight / 4.0f;
 				int x1 = (v1.x + 1.0f) * bufferWidth / 4.0f;
@@ -74,7 +74,7 @@ namespace MiniRenderer
 
 					// Now put in the vertices value.
 					meshes[meshCount - 1].nVertices++;
-					Vec3f v;
+					Vec3 v;
 					iss >> v.x;
 					iss >> v.y;
 					iss >> v.z;

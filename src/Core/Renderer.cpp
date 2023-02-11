@@ -2,7 +2,6 @@
 #include "LineRenderer.h"
 #include "TriangleRenderer.h"
 
-#include <iostream>
 #include <chrono>		// For Time related queries.
 #include <stdlib.h>		// For EXIT_FAILURE & EXIT_SUCCESS.
 #include <stdexcept>	// For std::runtime_error().

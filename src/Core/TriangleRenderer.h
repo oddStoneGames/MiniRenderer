@@ -1,20 +1,20 @@
 /// Draws a triangle using bounds.
 #pragma once
 
-#include "Maths/Maths.h"
+#include "Maths.h"
 #include "Framebuffer.h"
 #include <cmath>
 
 namespace MiniRenderer
 {
-    Vec3f Barycentric(Vec2i* pts, Vec2i P)
+    Vec3 Barycentric(Vec2i* pts, Vec2i P)
     {
-        Vec3f u = Cross(Vec3f(pts[2].x - pts[0].x, pts[1].x - pts[0].x, pts[0].x - P.x), Vec3f(pts[2].y - pts[0].y, pts[1].y - pts[0].y, pts[0].y - P.y));
+        Vec3 u = Cross(Vec3(pts[2].x - pts[0].x, pts[1].x - pts[0].x, pts[0].x - P.x), Vec3(pts[2].y - pts[0].y, pts[1].y - pts[0].y, pts[0].y - P.y));
         /* `pts` and `P` has integer value as coordinates
            so `abs(u[2])` < 1 means `u[2]` is 0, that means
            triangle is degenerate, in this case return something with negative coordinates */
-        if (Abs(u.z) < 1) return Vec3f(-1, 1, 1);
-        return Vec3f(1.f - (u.x + u.y) / u.z, u.y / u.z, u.x / u.z);
+        if (Abs(u.z) < 1) return Vec3(-1, 1, 1);
+        return Vec3(1.f - (u.x + u.y) / u.z, u.y / u.z, u.x / u.z);
     }
 
     void DrawTriangle(Vec2i* pts, uint32_t color, Framebuffer& buffer)
@@ -37,7 +37,7 @@ namespace MiniRenderer
         {
             for (P.y = bboxmin.y; P.y <= bboxmax.y; P.y++)
             {
-                Vec3f bc_screen = Barycentric(pts, P);
+                Vec3 bc_screen = Barycentric(pts, P);
                 if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0) continue;
                 buffer.SetPixelColor(P.x, P.y, color);
             }
