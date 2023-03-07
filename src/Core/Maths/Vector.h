@@ -7,6 +7,8 @@
 #include <sstream>
 #include <ostream>
 
+#include <math.h>
+
 namespace MiniRenderer
 {
 #pragma region Vector2
