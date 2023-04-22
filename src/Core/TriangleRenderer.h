@@ -9,7 +9,7 @@ namespace MiniRenderer
 {
     Vec3f Barycentric(Vec2i* pts, Vec2i P)
     {
-        Vec3f u = Cross(Vec3f(pts[2].x - pts[0].x, pts[1].x - pts[0].x, pts[0].x - P.x), Vec3f(pts[2].y - pts[0].y, pts[1].y - pts[0].y, pts[0].y - P.y));
+        Vec3f u = Cross(Vec3f((float)pts[2].x - (float)pts[0].x, (float)pts[1].x - (float)pts[0].x, (float)pts[0].x - (float)P.x), Vec3f((float)pts[2].y - (float)pts[0].y, (float)pts[1].y - (float)pts[0].y, (float)pts[0].y - (float)P.y));
         /* `pts` and `P` has integer value as coordinates
            so `abs(u[2])` < 1 means `u[2]` is 0, that means
            triangle is degenerate, in this case return something with negative coordinates */

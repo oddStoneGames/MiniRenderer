@@ -15,7 +15,7 @@ namespace MiniRenderer
 			{
 				// Key Down Event without repeating.
 				KeyDownEvent kd;
-				kd.keycode = wParam;
+				kd.keycode = (int)wParam;
 				EventHandler::GetInstance()->KeyEventDispatcher.SendEvent(kd);
 			}
 			break;
@@ -24,7 +24,7 @@ namespace MiniRenderer
 		{
 			// Key Up Event.
 			KeyUpEvent ku;
-			ku.keycode = wParam;
+			ku.keycode = (int)wParam;
 			EventHandler::GetInstance()->KeyEventDispatcher.SendEvent(ku);
 			break;
 		}

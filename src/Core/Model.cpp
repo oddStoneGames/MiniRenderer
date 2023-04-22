@@ -20,17 +20,36 @@ namespace MiniRenderer
 		int bufferHeight = buffer.GetFramebufferHeight();
 		printf("Number of Faces: %d\tNumber of Vertices: %d\n", meshes[meshIndex].nFaces, meshes[meshIndex].nVertices);
 
-		for (int i = 0; i < meshes[meshIndex].nFaces / 3; i++)
+		Mat4 modelMatrix, projectionMatrix;
+		
+		for (uint32_t i = 0; i < meshes[meshIndex].nFaces / 3; i++)
 		{
-			for (int j = 0; j < 3; j++)
+			for (uint32_t j = 0; j < 3; j++)
 			{
 				Vec3f v0 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + j] - 1];
 				Vec3f v1 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + (j + 1) % 3] - 1];
-				int x0 = (v0.x + 1.0f) * bufferWidth / 4.0f;
-				int y0 = (v0.y + 1.0f) * bufferHeight / 4.0f;
-				int x1 = (v1.x + 1.0f) * bufferWidth / 4.0f;
-				int y1 = (v1.y + 1.0f) * bufferHeight / 4.0f;
-				DrawLine(x0, y0, x1, y1, color, buffer);
+
+				modelMatrix.Identity();
+
+				Scale(modelMatrix, Vec3f(1.5f, 2.5f, 1.5f));
+				//Rotate(modelMatrix, ToRadians(-10.0f), Vec3f(0.0f, 0.0f, 1.0f));
+				Rotate(modelMatrix, ToRadians(20.0f), Vec3f(1.0f, 0.0f, 0.0f));
+				Rotate(modelMatrix, ToRadians(60.0f), Vec3f(0.0f, 1.0f, 0.0f));
+				Translate(modelMatrix, Vec3f(0.0f, 0.0f, 10.0f));
+
+				Perspective(projectionMatrix, 60.0f, (float)bufferWidth / (float)bufferHeight, 0.1f, 100.0f);
+				//Orthographic(projectionMatrix, 10.0f, -10.0f, 10.0f, -10.0f, 0.01f, 20.0f);
+
+				v0 = projectionMatrix * modelMatrix * v0;
+				v1 = projectionMatrix * modelMatrix * v1;
+
+				v0.x = (int)((v0.x + 1) * bufferWidth / 2);
+				v0.y = (int)((v0.y + 1) * bufferHeight / 2);
+				
+				v1.x = (int)((v1.x + 1) * bufferWidth / 2);
+				v1.y = (int)((v1.y + 1) * bufferHeight / 2);
+
+				DrawLine(v0.x, v0.y, v1.x, v1.y, color, buffer);
 			}
 		}
 	}

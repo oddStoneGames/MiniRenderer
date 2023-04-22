@@ -3,6 +3,8 @@
 bin/
 CMakeFiles/
 Debug/
+MinSizeRel/
+RelWithDebInfo/
 Release/
 MiniRenderer.dir/
 x64/

@@ -228,13 +228,13 @@ namespace MiniRenderer
 		// Get the Middle of the Screen.
 		int framebufferWidth = m_Swapchain.backBuffer.GetFramebufferWidth();
 		int framebufferHeight = m_Swapchain.backBuffer.GetFramebufferHeight();
-		int midX = framebufferWidth * 0.5f;
-		int midY = framebufferHeight * 0.5f;
+		int midX = framebufferWidth / 2;
+		int midY = framebufferHeight / 2;
 
 		// Rectangle size is 20% of the window width & 10% of the window height.
-		int sizeX = framebufferWidth * 0.2f, sizeY = framebufferHeight * 0.1f;
-		int startingPixelX = midX - sizeX * 0.5f;
-		int startingPixelY = midY - sizeY * 0.5f;
+		int sizeX = framebufferWidth / 5, sizeY = framebufferHeight / 10;
+		int startingPixelX = midX - sizeX / 2;
+		int startingPixelY = midY - sizeY / 2;
 
 		// Send draw command for every pixel.
 		for (int x = startingPixelX; x <= startingPixelX + sizeX; x++)
@@ -246,8 +246,8 @@ namespace MiniRenderer
 	{
 		int bufferWidth = m_Swapchain.backBuffer.GetFramebufferWidth();
 		int bufferHeight = m_Swapchain.backBuffer.GetFramebufferHeight();
-		int midPointX = bufferWidth * 0.5f;
-		int midPointY = bufferHeight * 0.5f;
+		int midPointX = bufferWidth / 2;
+		int midPointY = bufferHeight / 2;
 
 		DrawLine(0, 0, midPointX, midPointY, 0xFF5516, m_Swapchain.backBuffer);
 		DrawLine(bufferWidth, 0, midPointX, midPointY, 0x40EA76, m_Swapchain.backBuffer);

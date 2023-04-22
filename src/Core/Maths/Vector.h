@@ -102,11 +102,11 @@ namespace MiniRenderer
 
 		// Arithmetic Operators with float
 		inline Vec3i operator*(const int b) const { return _mm_mul_epi32(_mValue, _mm_set1_epi32(b)); }
-		inline Vec3i operator/(const int b) const { assert(b == 0); return _mm_castps_si128(_mm_div_ps(_mm_castsi128_ps(_mValue), _mm_set1_ps(b))); }
+		inline Vec3i operator/(const int b) const { assert(b == 0); return _mm_castps_si128(_mm_div_ps(_mm_castsi128_ps(_mValue), _mm_set1_ps((float)b))); }
 
 		// Arithmetic Assignment Operators with float
 		inline const Vec3i& operator*=(const int b) { _mValue = _mm_mul_epi32(_mValue, _mm_set1_epi32(b)); return *this; }
-		inline const Vec3i& operator/=(const int b) { assert(b == 0); _mValue = _mm_castps_si128(_mm_div_ps(_mm_castsi128_ps(_mValue), _mm_set1_ps(b))); return *this; }
+		inline const Vec3i& operator/=(const int b) { assert(b == 0); _mValue = _mm_castps_si128(_mm_div_ps(_mm_castsi128_ps(_mValue), _mm_set1_ps((float)b))); return *this; }
 
 		// Arithmetic Operators
 		inline Vec3i operator+(const Vec3i& b) const { return _mm_add_epi32(_mValue, b._mValue); }
@@ -203,26 +203,27 @@ namespace MiniRenderer
 
 		// Arithmetic Operators with float
 		inline Vec3f operator*(const float b) const { return _mm_mul_ps(_mValue, _mm_set1_ps(b)); }
-		inline Vec3f operator/(const float b) const { assert(b == 0.0f); return _mm_div_ps(_mValue, _mm_set1_ps(b)); }
+		inline Vec3f operator/(const float b) const { assert(b != 0.0f); return _mm_div_ps(_mValue, _mm_set1_ps(b)); }
 
 		// Arithmetic Assignment Operators with float
 		inline const Vec3f& operator*=(const float b) { _mValue = _mm_mul_ps(_mValue, _mm_set1_ps(b)); return *this; }
-		inline const Vec3f& operator/=(const float b) { assert(b == 0.0f); _mValue = _mm_div_ps(_mValue, _mm_set1_ps(b)); return *this; }
+		inline const Vec3f& operator/=(const float b) { assert(b != 0.0f); _mValue = _mm_div_ps(_mValue, _mm_set1_ps(b)); return *this; }
 
 		// Arithmetic Operators
 		inline Vec3f operator+(const Vec3f& b) const { return _mm_add_ps(_mValue, b._mValue); }
 		inline Vec3f operator-(const Vec3f& b) const { return _mm_sub_ps(_mValue, b._mValue); }
 		inline Vec3f operator*(const Vec3f& b) const { return _mm_mul_ps(_mValue, b._mValue); }
-		inline Vec3f operator/(const Vec3f& b) const { assert(b.length() == 0.0f); return _mm_div_ps(_mValue, b._mValue); }
+		inline Vec3f operator/(const Vec3f& b) const { assert(b.length() != 0.0f); return _mm_div_ps(_mValue, b._mValue); }
 
 		// Arithmetic Assignment Operators
 		inline const Vec3f& operator+=(const Vec3f& b) { _mValue = _mm_add_ps(_mValue, b._mValue); return *this; }
 		inline const Vec3f& operator-=(const Vec3f& b) { _mValue = _mm_sub_ps(_mValue, b._mValue); return *this; }
 		inline const Vec3f& operator*=(const Vec3f& b) { _mValue = _mm_mul_ps(_mValue, b._mValue); return *this; }
-		inline const Vec3f& operator/=(const Vec3f& b) { assert(b.length() == 0.0f); _mValue = _mm_div_ps(_mValue, b._mValue); return *this; }
+		inline const Vec3f& operator/=(const Vec3f& b) { assert(b.length() != 0.0f); _mValue = _mm_div_ps(_mValue, b._mValue); return *this; }
 
 		// Subscript/Array Index Operator
-		inline float& operator[](int index) { assert(index < 0 || index >= 3); return (&x)[index]; }
+		inline float& operator[](int index) { assert(index > 0 || index < 3); return (&x)[index]; }
+		inline const float& operator[](int index) const { assert(index > 0 || index < 3); return (&x)[index]; }
 
 		// Returns the Length of this Vector.
 		inline float length() const { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(_mValue, _mValue, 0x71))); }
@@ -296,26 +297,26 @@ namespace MiniRenderer
 
 		// Arithmetic Operators with float
 		inline Vec4f operator*(const float b) const { return _mm_mul_ps(_mValue, _mm_set1_ps(b)); }
-		inline Vec4f operator/(const float b) const { assert(b == 0.0f); return _mm_div_ps(_mValue, _mm_set1_ps(b)); }
+		inline Vec4f operator/(const float b) const { assert(b != 0.0f); return _mm_div_ps(_mValue, _mm_set1_ps(b)); }
 
 		// Arithmetic Assignment Operators with float
 		inline const Vec4f& operator*=(const float b) { _mValue = _mm_mul_ps(_mValue, _mm_set1_ps(b)); return *this; }
-		inline const Vec4f& operator/=(const float b) { assert(b == 0.0f); _mValue = _mm_div_ps(_mValue, _mm_set1_ps(b)); return *this; }
+		inline const Vec4f& operator/=(const float b) { assert(b != 0.0f); _mValue = _mm_div_ps(_mValue, _mm_set1_ps(b)); return *this; }
 
 		// Arithmetic Operators
 		inline Vec4f operator+(const Vec4f& b) const { return _mm_add_ps(_mValue, b._mValue); }
 		inline Vec4f operator-(const Vec4f& b) const { return _mm_sub_ps(_mValue, b._mValue); }
 		inline Vec4f operator*(const Vec4f& b) const { return _mm_mul_ps(_mValue, b._mValue); }
-		inline Vec4f operator/(const Vec4f& b) const { assert(b.length() == 0.0f); return _mm_div_ps(_mValue, b._mValue); }
+		inline Vec4f operator/(const Vec4f& b) const { assert(b.length() != 0.0f); return _mm_div_ps(_mValue, b._mValue); }
 
 		// Arithmetic Assignment Operators
 		inline const Vec4f& operator+=(const Vec4f& b) { _mValue = _mm_add_ps(_mValue, b._mValue); return *this; }
 		inline const Vec4f& operator-=(const Vec4f& b) { _mValue = _mm_sub_ps(_mValue, b._mValue); return *this; }
 		inline const Vec4f& operator*=(const Vec4f& b) { _mValue = _mm_mul_ps(_mValue, b._mValue); return *this; }
-		inline const Vec4f& operator/=(const Vec4f& b) { assert(b.length() == 0.0f); _mValue = _mm_div_ps(_mValue, b._mValue); return *this; }
+		inline const Vec4f& operator/=(const Vec4f& b) { assert(b.length() != 0.0f); _mValue = _mm_div_ps(_mValue, b._mValue); return *this; }
 
 		// Subscript/Array Index Operator
-		inline float& operator[](int index) { assert(index < 0 || index >= 4); return (&x)[index]; }
+		inline float& operator[](int index) { assert(index > 0 || index < 4); return (&x)[index]; }
 
 		// Returns the Length of this Vector.
 		inline float length() const { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(_mValue, _mValue, 0xF1))); }
