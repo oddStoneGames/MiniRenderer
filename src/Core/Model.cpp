@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "LineRenderer.h"
+#include "TriangleRenderer.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -50,6 +51,57 @@ namespace MiniRenderer
 				v1.y = (int)((v1.y + 1) * bufferHeight / 2);
 
 				DrawLine(v0.x, v0.y, v1.x, v1.y, color, buffer);
+			}
+		}
+	}
+
+	void Model::Draw(Framebuffer& buffer, uint32_t meshIndex, uint32_t color)
+	{
+		if (meshes.size() < meshIndex + 1) return;
+
+		int bufferWidth = buffer.GetFramebufferWidth();
+		int bufferHeight = buffer.GetFramebufferHeight();
+		printf("Number of Faces: %d\tNumber of Vertices: %d\n", meshes[meshIndex].nFaces, meshes[meshIndex].nVertices);
+
+		Mat4 modelMatrix, projectionMatrix;
+
+		for (uint32_t i = 0; i < meshes[meshIndex].nFaces / 3; i++)
+		{
+			Vec2i triangle[3];
+			for (uint32_t j = 0; j < 3; j++)
+			{
+				Vec3f v0 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + j] - 1];
+				Vec3f v1 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + (j + 1) % 3] - 1];
+				Vec3f v2 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + (j + 2) % 3] - 1];
+
+				modelMatrix.Identity();
+
+				Scale(modelMatrix, Vec3f(1.5f, 2.5f, 1.5f));
+				//Rotate(modelMatrix, ToRadians(-10.0f), Vec3f(0.0f, 0.0f, 1.0f));
+				Rotate(modelMatrix, ToRadians(20.0f), Vec3f(1.0f, 0.0f, 0.0f));
+				Rotate(modelMatrix, ToRadians(45.0f), Vec3f(0.0f, 1.0f, 0.0f));
+				Translate(modelMatrix, Vec3f(0.0f, 0.0f, 10.0f));
+
+				Perspective(projectionMatrix, 60.0f, (float)bufferWidth / (float)bufferHeight, 0.1f, 100.0f);
+				//Orthographic(projectionMatrix, 10.0f, -10.0f, 10.0f, -10.0f, 0.01f, 20.0f);
+
+				v0 = projectionMatrix * modelMatrix * v0;
+				v1 = projectionMatrix * modelMatrix * v1;
+				v2 = projectionMatrix * modelMatrix * v2;
+
+				v0.x = (int)((v0.x + 1) * bufferWidth / 2);
+				v0.y = (int)((v0.y + 1) * bufferHeight / 2);
+				triangle[0] = Vec2i(v0.x, v0.y);
+
+				v1.x = (int)((v1.x + 1) * bufferWidth / 2);
+				v1.y = (int)((v1.y + 1) * bufferHeight / 2);
+				triangle[1] = Vec2i(v1.x, v1.y);
+
+				v2.x = (int)((v2.x + 1) * bufferWidth / 2);
+				v2.y = (int)((v2.y + 1) * bufferHeight / 2);
+				triangle[2] = Vec2i(v2.x, v2.y);
+				
+				DrawTriangle(triangle, color, buffer);
 			}
 		}
 	}

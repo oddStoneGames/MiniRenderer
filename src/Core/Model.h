@@ -30,6 +30,9 @@ namespace MiniRenderer
 		std::vector<Mesh> meshes;
 		/// @brief Draws the given Mesh as lines with the desired color to the given buffer.
 		void DrawWireframe(Framebuffer& buffer, uint32_t meshIndex = 0, uint32_t color = 0xFFFF00);
+
+		/// @brief Draws the given Mesh as triangles with the desired color to the given buffer.
+		void Draw(Framebuffer& buffer, uint32_t meshIndex = 0, uint32_t color = 0xFFFF00);
 	private:
 		/// @brief Loads the Mesh with the values in path
 		void LoadMesh(const std::string path);

@@ -1,5 +1,6 @@
 /// Draws a triangle using bounds.
-#pragma once
+#ifndef TRIANGLE_RENDERER_H
+#define TRIANGLE_RENDERER_H
 
 #include "Maths/Maths.h"
 #include "Framebuffer.h"
@@ -7,17 +8,17 @@
 
 namespace MiniRenderer
 {
-    Vec3f Barycentric(Vec2i* pts, Vec2i P)
+    inline Vec3f Barycentric(Vec2i* pts, Vec2i P)
     {
         Vec3f u = Cross(Vec3f((float)pts[2].x - (float)pts[0].x, (float)pts[1].x - (float)pts[0].x, (float)pts[0].x - (float)P.x), Vec3f((float)pts[2].y - (float)pts[0].y, (float)pts[1].y - (float)pts[0].y, (float)pts[0].y - (float)P.y));
         /* `pts` and `P` has integer value as coordinates
-           so `abs(u[2])` < 1 means `u[2]` is 0, that means
+           so `Abs(u[2])` < 1 means `u[2]` is 0, that means
            triangle is degenerate, in this case return something with negative coordinates */
         if (Abs(u.z) < 1) return Vec3f(-1, 1, 1);
         return Vec3f(1.f - (u.x + u.y) / u.z, u.y / u.z, u.x / u.z);
     }
 
-    void DrawTriangle(Vec2i* pts, uint32_t color, Framebuffer& buffer)
+    inline void DrawTriangle(Vec2i* pts, uint32_t color, Framebuffer& buffer)
     {
         int width = buffer.GetFramebufferWidth();
         int height = buffer.GetFramebufferHeight();
@@ -43,5 +44,5 @@ namespace MiniRenderer
             }
         }
     }
-
 }
+#endif // !TRIANGLE_RENDERER_H
