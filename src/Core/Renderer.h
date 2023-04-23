@@ -7,6 +7,7 @@
 #include "Events/EventHandler.h"
 #include "Swapchain.h"
 #include "Model.h"
+#include "Camera.h"
 
 namespace MiniRenderer
 {
@@ -45,6 +46,9 @@ namespace MiniRenderer
 		/// @brief Called when keyboard events(key down or key up) happen.
 		void OnKeyEvent(const Event<KeyEvents>& e);
 
+		/// @brief Sends the WSAD input to the camera.
+		void SendWSADInput();
+
 		/// @brief Draws a Rectangle to the backbuffer.
 		void DrawRectangle();
 
@@ -69,10 +73,34 @@ namespace MiniRenderer
 		/// @brief To ensure that we don't render another frame instantly if we are capping FPS.
 		float m_WaitTime = 0.0f;
 
+		/// @brief Time took to render the last frame.
+		float m_DeltaTime = 0.0f;
+
 		/// @brief The Time at which we started waiting.
 		long long m_TimeWhenWeStartedWaiting = 0;
 
 		/// @brief Test Model.
 		Model m_TestModel;
+
+		/// Scene Fly Cam.
+		Camera m_Camera;
+
+		// To eliminate sudden jumps in rotation when we first rotate the camera.
+		float m_LastX;
+		float m_LastY;
+		bool m_FirstMouse;
+
+		// We only want to rotate the camera if the right click is held down.
+		bool m_RightClickHeld;
+
+		struct WSADheld
+		{
+			unsigned char w : 1;
+			unsigned char s : 1;
+			unsigned char a : 1;
+			unsigned char d : 1;
+
+			WSADheld() : w(0), s(0), a(0), d(0) {}
+		}m_WSADheld;
 	};
 }

@@ -21,14 +21,20 @@ namespace MiniRenderer
 		virtual void Draw(const Framebuffer& framebuffer) override;
 		virtual void OnClose() override;
 
+		virtual void SetCursorPosition(int x, int y) override;
+		virtual void RenderCursor(bool show) override;
+		virtual void ConfineCursor(bool confine) override;
+
 		virtual uint32_t GetWidth() const override { return m_Data.Width; }
 		virtual uint32_t GetHeight() const override { return m_Data.Height; }
 	private:
 		int Init(const WindowProperties& props);
 		bool ProcessMessages();
+		RECT GetLocalCoordinates() const;
 	private:
 		HINSTANCE m_hInstance;
 		HWND m_hWnd;
+		RECT m_ScreenSize;
 		HDC m_DeviceContext;
 		BITMAPINFO m_BitmapInfo;	// Struct for StretchDIBits.
 		const TCHAR* m_Classname = TEXT("My Window");

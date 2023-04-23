@@ -32,6 +32,11 @@ namespace MiniRenderer
 		virtual void OnUpdate() = 0;
 		virtual void Draw(const Framebuffer &framebuffer) = 0;
 		virtual void OnClose() = 0;
+
+		virtual void SetCursorPosition(int x, int y) = 0;
+		virtual void RenderCursor(bool show) = 0;
+		virtual void ConfineCursor(bool confine) = 0;
+
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
 

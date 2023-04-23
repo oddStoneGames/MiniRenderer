@@ -130,6 +130,40 @@ namespace MiniRenderer
 		UnregisterClass(m_Classname, m_hInstance);
 	}
 
+	void WindowsWindow::SetCursorPosition(int x, int y)
+	{
+		RECT windowPosition = GetLocalCoordinates();
+		SetCursorPos(windowPosition.left + x, windowPosition.top + y);
+	}
+
+	void WindowsWindow::RenderCursor(bool show)
+	{
+		ShowCursor(show);
+	}
+
+	void WindowsWindow::ConfineCursor(bool confine)
+	{
+		RECT rcClip; //Area for ClipCursor  
+
+		// Get the dimensions of the application's window.
+		GetClientRect(m_hWnd, &rcClip);
+		POINT top_left = {rcClip.left, rcClip.top};
+		POINT bottom_right = {rcClip.right, rcClip.bottom};
+		ClientToScreen(m_hWnd, &top_left);
+		ClientToScreen(m_hWnd, &bottom_right);
+
+		RECT clientArea;
+		clientArea.top = top_left.y;
+		clientArea.left = top_left.x;
+		clientArea.bottom = bottom_right.y;
+		clientArea.right = bottom_right.x;
+
+		printf("Left: %d, Right: %d, Top: %d, Bottom: %d\n", clientArea.left, clientArea.right, clientArea.top, clientArea.bottom);
+
+		// Confine the cursor to the application's window or free the cursor.
+		ClipCursor(confine ? &clientArea : &m_ScreenSize);
+	}
+
 	std::unique_ptr<MiniWindow> MiniWindow::Create(const WindowProperties& props)
 	{
 		return std::make_unique<WindowsWindow>(props);
@@ -146,6 +180,14 @@ namespace MiniRenderer
 		}
 
 		return true;
+	}
+
+	RECT WindowsWindow::GetLocalCoordinates() const
+	{
+		RECT Rect;
+		GetWindowRect(m_hWnd, &Rect);
+		MapWindowPoints(HWND_DESKTOP, GetParent(m_hWnd), (LPPOINT)&Rect, 2);
+		return Rect;
 	}
 
 	int WindowsWindow::Init(const WindowProperties& props)
@@ -196,6 +238,9 @@ namespace MiniRenderer
 
 		m_DeviceContext = GetDC(m_hWnd);
 		ShowWindow(m_hWnd, SW_SHOW);
+
+		// Record the area in which the cursor can move.
+		GetClipCursor(&m_ScreenSize);
 
 		return 0;
 	}

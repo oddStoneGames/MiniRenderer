@@ -20,4 +20,5 @@ cmake -S . -B ./bin -DPLATFORM_WINDOWS=OFF
 ```  
 
 ## Snapshots   
+![](/snapshots/2.png)  
 ![](/snapshots/1.png)  

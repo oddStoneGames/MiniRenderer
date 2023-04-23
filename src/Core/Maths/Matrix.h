@@ -17,6 +17,17 @@ namespace MiniRenderer
 			AllocateSpace();
 		}
 
+		Matrix(float identityScale) : m_Rows(rows), m_Columns(columns)
+		{
+			AllocateSpace();
+
+			if (m_Rows != m_Columns) return;
+
+			for (int i = 0; i < m_Rows; ++i)
+				for (int j = 0; j < m_Columns; ++j)
+					m_Buffer[i][j] = (i == j) ? identityScale : 0;
+		}
+
 		Matrix(const Matrix<rows, columns>& other) : m_Rows(rows), m_Columns(columns)
 		{
 			AllocateSpace();

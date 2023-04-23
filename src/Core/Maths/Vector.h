@@ -77,6 +77,22 @@ namespace MiniRenderer
 		return (float)(v.x * u.x + v.y * u.y);
 	}
 
+	/// @brief Returns the given vector to scaled to unit length.
+	template<class T>
+	inline Vector2<T> Normalize(Vector2<T>& v)
+	{
+		return v.normalize();
+	}
+
+	/// @brief Returns the given vector to scaled to unit length.
+	template<class T>
+	inline Vector2<T> Normalize(const Vector2<T> v)
+	{
+		Vector2<T> res(v);
+		v *= static_cast<T>(1) / v.length();
+		return v;
+	}
+
 	/// @brief Two floating point values.
 	typedef Vector2<float> Vec2f;
 
@@ -154,6 +170,17 @@ namespace MiniRenderer
 			__m128i _mValue;
 		};
 	};
+
+	/// @brief Returns the given vector to scaled to unit length.
+	inline Vec3i Normalize(Vec3i& v) { return v.normalize(); }
+
+	/// @brief Returns the given vector to scaled to unit length.
+	inline Vec3i Normalize(const Vec3i v)
+	{
+		Vec3i res(v);
+		res._mValue = _mm_castps_si128(_mm_mul_ps(_mm_castsi128_ps(res._mValue), _mm_rsqrt_ps(_mm_dp_ps(_mm_castsi128_ps(res._mValue), _mm_castsi128_ps(res._mValue), 0x7F))));
+		return res;
+	}
 
 	/// @brief Returns the Dot Product of integer vectors a & b.
 	inline float Dot(const Vec3i& a, const Vec3i& b)
@@ -253,6 +280,17 @@ namespace MiniRenderer
 		};
 	};
 
+	/// @brief Returns the given vector to scaled to unit length.
+	inline Vec3f Normalize(Vec3f& v) { return v.normalize(); }
+
+	/// @brief Returns the given vector to scaled to unit length.
+	inline Vec3f Normalize(const Vec3f v)
+	{
+		Vec3f res(v);
+		res._mValue = _mm_mul_ps(res._mValue, _mm_rsqrt_ps(_mm_dp_ps(res._mValue, res._mValue, 0x7F)));
+		return res;
+	}
+
 	/// @brief Returns the Dot Product of two floating point vectors a & b.
 	inline float Dot(const Vec3f& a, const Vec3f& b)
 	{
@@ -345,6 +383,17 @@ namespace MiniRenderer
 			__m128 _mValue;
 		};
 	};
+
+	/// @brief Returns the given vector to scaled to unit length.
+	inline Vec4f Normalize(Vec4f& v) { return v.normalize(); }
+
+	/// @brief Returns the given vector to scaled to unit length.
+	inline Vec4f Normalize(const Vec4f v)
+	{
+		Vec4f res(v);
+		res._mValue = _mm_mul_ps(res._mValue, _mm_rsqrt_ps(_mm_dp_ps(res._mValue, res._mValue, 0x7F)));
+		return res;
+	}
 
 	/// @brief Returns the Dot Product of two floating point vectors a & b.
 	inline float Dot(const Vec4f& a, const Vec4f& b)

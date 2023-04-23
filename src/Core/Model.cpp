@@ -55,15 +55,18 @@ namespace MiniRenderer
 		}
 	}
 
-	void Model::Draw(Framebuffer& buffer, uint32_t meshIndex, uint32_t color)
+	void Model::Draw(Framebuffer& buffer, Camera& camera, uint32_t meshIndex, uint32_t color)
 	{
 		if (meshes.size() < meshIndex + 1) return;
 
 		int bufferWidth = buffer.GetFramebufferWidth();
 		int bufferHeight = buffer.GetFramebufferHeight();
-		printf("Number of Faces: %d\tNumber of Vertices: %d\n", meshes[meshIndex].nFaces, meshes[meshIndex].nVertices);
+		//printf("Number of Faces: %d\tNumber of Vertices: %d\n", meshes[meshIndex].nFaces, meshes[meshIndex].nVertices);
 
-		Mat4 modelMatrix, projectionMatrix;
+		Mat4 modelMatrix, projectionMatrix, viewMatrix = camera.GetViewMatrix();
+		
+		Vec3f lightDirection(0.2f, 0.3f, 1.0f);
+		lightDirection.normalize();
 
 		for (uint32_t i = 0; i < meshes[meshIndex].nFaces / 3; i++)
 		{
@@ -75,19 +78,30 @@ namespace MiniRenderer
 				Vec3f v2 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + (j + 2) % 3] - 1];
 
 				modelMatrix.Identity();
+				projectionMatrix.Identity();
 
 				Scale(modelMatrix, Vec3f(1.5f, 2.5f, 1.5f));
 				//Rotate(modelMatrix, ToRadians(-10.0f), Vec3f(0.0f, 0.0f, 1.0f));
 				Rotate(modelMatrix, ToRadians(20.0f), Vec3f(1.0f, 0.0f, 0.0f));
 				Rotate(modelMatrix, ToRadians(45.0f), Vec3f(0.0f, 1.0f, 0.0f));
-				Translate(modelMatrix, Vec3f(0.0f, 0.0f, 10.0f));
 
 				Perspective(projectionMatrix, 60.0f, (float)bufferWidth / (float)bufferHeight, 0.1f, 100.0f);
 				//Orthographic(projectionMatrix, 10.0f, -10.0f, 10.0f, -10.0f, 0.01f, 20.0f);
 
-				v0 = projectionMatrix * modelMatrix * v0;
-				v1 = projectionMatrix * modelMatrix * v1;
-				v2 = projectionMatrix * modelMatrix * v2;
+				v0 = modelMatrix * v0;
+				v1 = modelMatrix * v1;
+				v2 = modelMatrix * v2;
+
+				// Get Normal
+				Vec3f normal = Cross(v2 - v0, v1 - v0);
+				normal.normalize();
+
+				// Flat Shading
+				float intensity = Dot(normal, lightDirection);
+
+				v0 = projectionMatrix * viewMatrix * v0;
+				v1 = projectionMatrix * viewMatrix * v1;
+				v2 = projectionMatrix * viewMatrix * v2;
 
 				v0.x = (int)((v0.x + 1) * bufferWidth / 2);
 				v0.y = (int)((v0.y + 1) * bufferHeight / 2);
@@ -100,8 +114,14 @@ namespace MiniRenderer
 				v2.x = (int)((v2.x + 1) * bufferWidth / 2);
 				v2.y = (int)((v2.y + 1) * bufferHeight / 2);
 				triangle[2] = Vec2i(v2.x, v2.y);
-				
-				DrawTriangle(triangle, color, buffer);
+
+				uint32_t red = ((color >> 16) & 0xFF) * intensity;
+				uint32_t green = ((color >> 8) & 0xFF) * intensity;
+				uint32_t blue = (color & 0xFF) * intensity;
+
+				uint32_t col = (red << 16) + (green << 8) + blue;
+
+				DrawTriangle(triangle, col, buffer);
 			}
 		}
 	}

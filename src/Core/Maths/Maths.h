@@ -26,6 +26,14 @@ namespace MiniRenderer
 	}
 
 	template<class T>
+	inline T Clamp(T value, T min, T max)
+	{
+		if (value < min) value = min;
+		if (value > max) value = max;
+		return value;
+	}
+
+	template<class T>
 	inline T ToRadians(T degrees)
 	{
 		return degrees * pie / static_cast<T>(180);
@@ -35,6 +43,24 @@ namespace MiniRenderer
 	inline T ToDegrees(T radians)
 	{
 		return radians * static_cast<T>(180) / pie;
+	}
+
+	template<class T>
+	inline float Cos(T angle)
+	{
+		return std::cos(angle);
+	}
+
+	template<class T>
+	inline float Sin(T angle)
+	{
+		return std::sin(angle);
+	}
+
+	template<class T>
+	inline float Tan(T angle)
+	{
+		return std::tan(angle);
 	}
 
 	inline void Translate(Mat4& m, const Vec3f& translation)
@@ -54,8 +80,8 @@ namespace MiniRenderer
 	inline void Rotate(Mat4& m, T angle, Vec3f& axis)
 	{
 		T const a = angle;
-		T const c = std::cos(a);
-		T const s = std::sin(a);
+		T const c = Cos(a);
+		T const s = Sin(a);
 
 		axis.normalize();
 
@@ -76,6 +102,33 @@ namespace MiniRenderer
 		rotate(2, 2) = c + temp[2] * axis[2];
 
 		m = m * rotate;
+	}
+
+	inline Mat4 LookAt(Vec3f position, Vec3f target, Vec3f worldUp)
+	{
+		Vec3f zaxis = Normalize(position - target);
+		Vec3f xaxis = Normalize(Cross(worldUp.normalize(), zaxis));
+		Vec3f yaxis = Cross(zaxis, xaxis);
+
+		Mat4 translation(1.0f);
+		translation(0, 3) = -position.x;
+		translation(1, 3) = -position.y;
+		translation(2, 3) = -position.z;
+
+		Mat4 rotation(1.0f);
+		rotation(0, 0) = xaxis.x;
+		rotation(0, 1) = xaxis.y;
+		rotation(0, 2) = xaxis.z;
+
+		rotation(1, 0) = yaxis.x;
+		rotation(1, 1) = yaxis.y;
+		rotation(1, 2) = yaxis.z;
+
+		rotation(2, 0) = zaxis.x;
+		rotation(2, 1) = zaxis.y;
+		rotation(2, 2) = zaxis.z;
+
+		return rotation * translation;
 	}
 
 	template<typename T>
@@ -100,7 +153,7 @@ namespace MiniRenderer
 	template<typename T>
 	inline void Perspective(Mat4& perspective, T fovy, T aspect, T zNear, T zFar)
 	{
-		T const tanHalfFovy = tan(fovy / static_cast<T>(2));
+		T const tanHalfFovy = Tan(fovy / static_cast<T>(2));
 
 		perspective.Identity();
 

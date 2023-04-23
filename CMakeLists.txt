@@ -28,6 +28,7 @@ set(SOURCE_FILES src/Core/Renderer.cpp src/Core/Renderer.h src/Core/Window.h
                  src/Core/LineRenderer.h
                  src/Core/TriangleRenderer.h
                  src/Core/Model.cpp src/Core/Model.h
+                 src/Core/Camera.cpp src/Core/Camera.h
                  src/Platform/Windows/WindowsWindow.h src/Platform/Windows/WindowsWindow.cpp
                  src/Platform/Linux/LinuxWindow.h src/Platform/Linux/LinuxWindow.cpp)
 
