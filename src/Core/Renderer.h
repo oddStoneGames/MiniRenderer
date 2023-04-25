@@ -34,6 +34,9 @@ namespace MiniRenderer
 		/// @brief Render Loop.
 		void RenderLoop();
 
+		/// @brief All the rendering calls happens in this function.
+		void Render();
+
 		/// @brief Frees up the taken memory and closes all the operations.
 		void Cleanup();
 

@@ -84,25 +84,7 @@ namespace MiniRenderer
 				// Get Time before rendering.
 				auto timeBeforeRendering = std::chrono::high_resolution_clock::now();
 
-				// Render a Rectangle for example.
-				//DrawRectangle();
-
-				//// Render a Line.
-				//DrawLines();
-
-				//// Render a Triangle.
-				//Vec2i points[3] = { Vec2i(40, 200), Vec2i(80, 120), Vec2i(120, 200) };
-				//DrawTriangle(points, 0x069C4F, m_Swapchain.backBuffer);
-
-				// Render model.
-				m_TestModel.Draw(m_Swapchain.backBuffer, m_Camera);
-				//m_TestModel.DrawWireframe(m_Swapchain.backBuffer);
-
-				// The Swapchain swaps the buffer if only our backbuffer is completed which we set manually.
-				m_Swapchain.SetBackbufferState(true);
-
-				// Swap the Buffers.
-				m_Swapchain.SwapBuffers(m_Window.get(), m_DoubleBuffer);
+				Render();
 
 				// Get Time after rendering.
 				auto timeAfterRendering = std::chrono::high_resolution_clock::now();
@@ -145,21 +127,7 @@ namespace MiniRenderer
 				// Get Time before rendering.
 				auto timeBeforeRendering = std::chrono::high_resolution_clock::now();
 
-				// Draw rectangle in the center of the screen.
-				DrawRectangle();
-
-				// Render Line.
-				DrawLines();
-
-				// Render a Triangle.
-				Vec2i points[3] = { Vec2i(40, 200), Vec2i(80, 120), Vec2i(120, 200) };
-				DrawTriangle(points, 0x069C4F, m_Swapchain.backBuffer);
-
-				// The Swapchain swaps the buffer if only our backbuffer is completed which we set manually.
-				m_Swapchain.SetBackbufferState(true);
-
-				// Swap Buffers and Show the End Result to the screen.
-				m_Swapchain.SwapBuffers(m_Window.get(), m_DoubleBuffer);
+				Render();
 
 				// Get Time after rendering.
 				auto timeAfterRendering = std::chrono::high_resolution_clock::now();
@@ -173,6 +141,29 @@ namespace MiniRenderer
 				//printf("Frametime: %.2f ms\t FPS: %.2f\n", frameTime, fps);
 			}
 		}
+	}
+
+	void Renderer::Render()
+	{
+		// Draw rectangle in the center of the screen.
+		//DrawRectangle();
+
+		// Render Line.
+		//DrawLines();
+
+		// Render a Triangle.
+		//Vec2i points[3] = { Vec2i(40, 200), Vec2i(80, 120), Vec2i(120, 200) };
+		//DrawTriangle(points, 0x069C4F, m_Swapchain.backBuffer);
+
+		// Render model.
+		m_TestModel.Draw(m_Swapchain.backBuffer, m_Camera);
+		//m_TestModel.DrawWireframe(m_Swapchain.backBuffer);
+
+		// The Swapchain swaps the buffer if only our backbuffer is completed which we set manually.
+		m_Swapchain.SetBackbufferState(true);
+
+		// Swap the Buffers.
+		m_Swapchain.SwapBuffers(m_Window.get(), m_DoubleBuffer);
 	}
 
 	void Renderer::Cleanup()
@@ -255,7 +246,6 @@ namespace MiniRenderer
 		{
 			// Key Down Event.
 			const KeyDownEvent& kd = static_cast<const KeyDownEvent&>(e);
-			printf("Key Down: %d\n", kd.keycode);
 
 			if(kd.keycode == 87) m_WSADheld.w = 1;
 			else if(kd.keycode == 83) m_WSADheld.s = 1;
@@ -266,14 +256,11 @@ namespace MiniRenderer
 			// Key Up Event.
 			// Key Down Event.
 			const KeyUpEvent& ku = static_cast<const KeyUpEvent&>(e);
-			printf("Key Up: %d\n", ku.keycode);
 			if (ku.keycode == 87) m_WSADheld.w = 0;
 			else if (ku.keycode == 83) m_WSADheld.s = 0;
 			else if (ku.keycode == 65) m_WSADheld.a = 0;
 			else if (ku.keycode == 68) m_WSADheld.d = 0;
 		}
-
-		printf("W: %d, S: %d, A: %d, D: %d\n", m_WSADheld.w, m_WSADheld.s, m_WSADheld.a, m_WSADheld.d);
     }
 
 	void Renderer::SendWSADInput()

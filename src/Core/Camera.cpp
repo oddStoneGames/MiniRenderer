@@ -30,8 +30,8 @@ namespace MiniRenderer
 		{
 			case MiniRenderer::CameraMovementDirection::Forward:  Position += Front * velocity; break;
 			case MiniRenderer::CameraMovementDirection::Backward: Position -= Front * velocity; break;
-			case MiniRenderer::CameraMovementDirection::Left:	  Position += Right * velocity; break;
-			case MiniRenderer::CameraMovementDirection::Right:	  Position -= Right * velocity; break;
+			case MiniRenderer::CameraMovementDirection::Left:	  Position -= Right * velocity; break;
+			case MiniRenderer::CameraMovementDirection::Right:	  Position += Right * velocity; break;
 			default: break;
 		}
 	}

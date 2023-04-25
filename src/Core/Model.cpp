@@ -19,7 +19,6 @@ namespace MiniRenderer
 
 		int bufferWidth = buffer.GetFramebufferWidth();
 		int bufferHeight = buffer.GetFramebufferHeight();
-		printf("Number of Faces: %d\tNumber of Vertices: %d\n", meshes[meshIndex].nFaces, meshes[meshIndex].nVertices);
 
 		Mat4 modelMatrix, projectionMatrix;
 		
@@ -68,24 +67,30 @@ namespace MiniRenderer
 		Vec3f lightDirection(0.2f, 0.3f, 1.0f);
 		lightDirection.normalize();
 
+		Vec2i triangle[3];
+
 		for (uint32_t i = 0; i < meshes[meshIndex].nFaces / 3; i++)
 		{
-			Vec2i triangle[3];
 			for (uint32_t j = 0; j < 3; j++)
 			{
-				Vec3f v0 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + j] - 1];
-				Vec3f v1 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + (j + 1) % 3] - 1];
-				Vec3f v2 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + (j + 2) % 3] - 1];
+				Vec3f rawV0 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + j] - 1];
+				Vec3f rawV1 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + (j + 1) % 3] - 1];
+				Vec3f rawV2 = meshes[meshIndex].vertices[meshes[meshIndex].faces[i * 3 + (j + 2) % 3] - 1];
+
+				Vec4f v0 = Vec4f(rawV0.x, rawV0.y, rawV0.z, 1.0f);
+				Vec4f v1 = Vec4f(rawV1.x, rawV1.y, rawV1.z, 1.0f);
+				Vec4f v2 = Vec4f(rawV2.x, rawV2.y, rawV2.z, 1.0f);
 
 				modelMatrix.Identity();
 				projectionMatrix.Identity();
 
 				Scale(modelMatrix, Vec3f(1.5f, 2.5f, 1.5f));
-				//Rotate(modelMatrix, ToRadians(-10.0f), Vec3f(0.0f, 0.0f, 1.0f));
+				Rotate(modelMatrix, ToRadians(-10.0f), Vec3f(0.0f, 0.0f, 1.0f));
 				Rotate(modelMatrix, ToRadians(20.0f), Vec3f(1.0f, 0.0f, 0.0f));
 				Rotate(modelMatrix, ToRadians(45.0f), Vec3f(0.0f, 1.0f, 0.0f));
+				Translate(modelMatrix, Vec3f(0.0f, 1.0f, -4.0f));
 
-				Perspective(projectionMatrix, 60.0f, (float)bufferWidth / (float)bufferHeight, 0.1f, 100.0f);
+				Perspective(projectionMatrix, 45.0f, (float)bufferWidth / (float)bufferHeight, 0.1f, 100.0f);
 				//Orthographic(projectionMatrix, 10.0f, -10.0f, 10.0f, -10.0f, 0.01f, 20.0f);
 
 				v0 = modelMatrix * v0;
@@ -93,7 +98,11 @@ namespace MiniRenderer
 				v2 = modelMatrix * v2;
 
 				// Get Normal
-				Vec3f normal = Cross(v2 - v0, v1 - v0);
+				Vec4f v2minuxv0 = v2 - v0;
+				Vec3f v2v0 = Vec3f(v2minuxv0.x, v2minuxv0.y, v2minuxv0.z);
+				Vec4f v1minuxv0 = v1 - v0;
+				Vec3f v1v0 = Vec3f(v1minuxv0.x, v1minuxv0.y, v1minuxv0.z);
+				Vec3f normal = Cross(v2v0, v1v0);
 				normal.normalize();
 
 				// Flat Shading
@@ -103,16 +112,28 @@ namespace MiniRenderer
 				v1 = projectionMatrix * viewMatrix * v1;
 				v2 = projectionMatrix * viewMatrix * v2;
 
-				v0.x = (int)((v0.x + 1) * bufferWidth / 2);
-				v0.y = (int)((v0.y + 1) * bufferHeight / 2);
+				v0.x = v0.x / v0.w;
+				v0.y = v0.y / v0.w;
+				v0.z = v0.z / v0.w;
+				
+				v1.x = v1.x / v1.w;
+				v1.y = v1.y / v1.w;
+				v1.z = v1.z / v1.w;
+				
+				v2.x = v2.x / v2.w;
+				v2.y = v2.y / v2.w;
+				v2.z = v2.z / v2.w;
+
+				v0.x = (int)((v0.x + 1) * (bufferWidth / 2));
+				v0.y = (int)((v0.y + 1) * (bufferHeight / 2));
 				triangle[0] = Vec2i(v0.x, v0.y);
 
-				v1.x = (int)((v1.x + 1) * bufferWidth / 2);
-				v1.y = (int)((v1.y + 1) * bufferHeight / 2);
+				v1.x = (int)((v1.x + 1) * (bufferWidth / 2));
+				v1.y = (int)((v1.y + 1) * (bufferHeight / 2));
 				triangle[1] = Vec2i(v1.x, v1.y);
 
-				v2.x = (int)((v2.x + 1) * bufferWidth / 2);
-				v2.y = (int)((v2.y + 1) * bufferHeight / 2);
+				v2.x = (int)((v2.x + 1) * (bufferWidth / 2));
+				v2.y = (int)((v2.y + 1) * (bufferHeight / 2));
 				triangle[2] = Vec2i(v2.x, v2.y);
 
 				uint32_t red = ((color >> 16) & 0xFF) * intensity;

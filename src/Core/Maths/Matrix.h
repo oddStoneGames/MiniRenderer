@@ -4,6 +4,7 @@
 #include "Vector.h"
 
 #include <iostream>
+#include <iomanip>
 #include <memory>
 
 namespace MiniRenderer
@@ -141,6 +142,20 @@ namespace MiniRenderer
 					mult[i] += m_Buffer[i][j] * temp[j];
 
 			return Vec3f(mult.x, mult.y, mult.z);
+		}
+
+		Vec4f& operator*(Vec4f& v)
+		{
+			if (rows < 3) return v;
+
+			Vec4f mult(0.0f);
+
+			// Multiplying matrix a and vector v and storing in array mult.
+			for (int i = 0; i < m_Rows; ++i)
+				for (int j = 0; j < m_Columns; ++j)
+					mult[i] += m_Buffer[i][j] * v[j];
+
+			return mult;
 		}
 
 		Matrix<rows, columns>& operator*=(float)
@@ -378,25 +393,35 @@ namespace MiniRenderer
 	{
 		for (int i = 0; i < rows; ++i)
 		{
+			if (m(i, 0) >= 0.0f) os << " ";
 			os << m(i, 0);
 			for (int j = 1; j < columns; ++j)
-				os << " " << m(i, j);
+			{
+				float p = m(i, j);
+				if (p >= 0.0f) os << " ";
+				os << " " << std::fixed << std::setprecision(6) << p;
+			}
 			os << std::endl;
 		}
 
 		return os;
 	}
 
+	typedef Matrix<1, 2> Mat1x2;
+
+	typedef Matrix<2, 1> Mat2x1;
 	typedef Matrix<2, 2> Mat2;
 	typedef Matrix<2, 2> Mat2x2;
 	typedef Matrix<2, 3> Mat2x3;
 	typedef Matrix<2, 4> Mat2x4;
 
+	typedef Matrix<3, 1> Mat3x1;
 	typedef Matrix<3, 2> Mat3x2;
 	typedef Matrix<3, 3> Mat3;
 	typedef Matrix<3, 3> Mat3x3;
 	typedef Matrix<3, 4> Mat3x4;
 
+	typedef Matrix<4, 1> Mat4x1;
 	typedef Matrix<4, 2> Mat4x2;
 	typedef Matrix<4, 3> Mat4x3;
 	typedef Matrix<4, 4> Mat4;

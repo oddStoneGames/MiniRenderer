@@ -101,34 +101,33 @@ namespace MiniRenderer
 		rotate(2, 1) = temp[1] * axis[2] + axis[0] * s;
 		rotate(2, 2) = c + temp[2] * axis[2];
 
-		m = m * rotate;
+		m = rotate * m;
 	}
 
 	inline Mat4 LookAt(Vec3f position, Vec3f target, Vec3f worldUp)
 	{
-		Vec3f zaxis = Normalize(position - target);
-		Vec3f xaxis = Normalize(Cross(worldUp.normalize(), zaxis));
-		Vec3f yaxis = Cross(zaxis, xaxis);
+		Vec3f zaxis = Normalize(target - position);
+		Vec3f xaxis = Normalize(Cross(zaxis, worldUp.normalize()));
+		Vec3f yaxis = Cross(xaxis, zaxis);
 
-		Mat4 translation(1.0f);
-		translation(0, 3) = -position.x;
-		translation(1, 3) = -position.y;
-		translation(2, 3) = -position.z;
+		Mat4 result(1.0f);
+		result(0, 0) = xaxis.x;
+		result(0, 1) = xaxis.y;
+		result(0, 2) = xaxis.z;
 
-		Mat4 rotation(1.0f);
-		rotation(0, 0) = xaxis.x;
-		rotation(0, 1) = xaxis.y;
-		rotation(0, 2) = xaxis.z;
+		result(1, 0) = yaxis.x;
+		result(1, 1) = yaxis.y;
+		result(1, 2) = yaxis.z;
 
-		rotation(1, 0) = yaxis.x;
-		rotation(1, 1) = yaxis.y;
-		rotation(1, 2) = yaxis.z;
+		result(2, 0) = -zaxis.x;
+		result(2, 1) = -zaxis.y;
+		result(2, 2) = -zaxis.z;
 
-		rotation(2, 0) = zaxis.x;
-		rotation(2, 1) = zaxis.y;
-		rotation(2, 2) = zaxis.z;
+		result(0, 3) = -Dot(xaxis, position);
+		result(1, 3) = -Dot(yaxis, position);
+		result(2, 3) =  Dot(zaxis, position);
 
-		return rotation * translation;
+		return result;
 	}
 
 	template<typename T>
@@ -155,14 +154,14 @@ namespace MiniRenderer
 	{
 		T const tanHalfFovy = Tan(fovy / static_cast<T>(2));
 
-		perspective.Identity();
+		perspective.Zero();
 
 		perspective(0, 0) = static_cast<T>(1) / (aspect * tanHalfFovy);
-		perspective(1, 1) = static_cast<T>(1) / tanHalfFovy;
-		perspective(2, 3) = -static_cast<T>(1);
+		perspective(1, 1) = static_cast<T>(1) / (tanHalfFovy);
+		perspective(3, 2) = -static_cast<T>(1);
 
 		perspective(2, 2) = -(zFar + zNear) / (zFar - zNear);
-		perspective(3, 2) = -(static_cast<T>(2) * zFar * zNear) / (zFar - zNear);
+		perspective(2, 3) = -(static_cast<T>(2) * zFar * zNear) / (zFar - zNear);
 	}
 }
 
