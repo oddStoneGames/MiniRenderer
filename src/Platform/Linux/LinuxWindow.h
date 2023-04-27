@@ -22,6 +22,10 @@ namespace MiniRenderer
 		virtual void Draw(const Framebuffer& framebuffer) override;
 		virtual void OnClose() override;
 
+		virtual void SetCursorPosition(int x, int y) override;
+		virtual void RenderCursor(bool show) override;
+		virtual void ConfineCursor(bool confine) override;
+
 		virtual uint32_t GetWidth() const override { return m_Data.Width; }
 		virtual uint32_t GetHeight() const override { return m_Data.Height; }
 	private:

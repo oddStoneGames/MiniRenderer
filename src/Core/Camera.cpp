@@ -68,7 +68,7 @@ namespace MiniRenderer
 		front.z = Sin(yawinRadians) * Cos(pitchinRadians);
 		Front = front.normalize();
 		// also re-calculate the Right and Up vector
-		Right = Normalize(Cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+ 		Right = Normalize(Cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 		Up = Normalize(Cross(Right, Front));
 	}
 }

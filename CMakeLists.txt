@@ -42,14 +42,6 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 list(APPEND EXTRA_LIBS Threads::Threads)
 
-# SSE4.2
-add_library(sse4_2 INTERFACE IMPORTED)
-if(MSVC)
-    target_compile_options(sse4_2 INTERFACE /arch:SSE4.2)
-else()
-    target_compile_options(sse4_2 INTERFACE -msse4.2)
-endif()
-
 # OPTIMIZATION FLAGS FOR RELEASE CONFIGURATION
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:RELEASE>:/O2>)
@@ -58,6 +50,14 @@ if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:RELEASE>:/Ot>)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:RELEASE>:-O3>)
+endif()
+
+# SSE4.2
+add_library(sse4_2 INTERFACE IMPORTED)
+if(MSVC)
+    SET (CMAKE_CXX_FLAGS "/arch:SSE4.2")
+else()
+    SET (CMAKE_CXX_FLAGS "-msse4.2")
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${EXTRA_INCLUDES})

@@ -77,7 +77,7 @@ namespace MiniRenderer
 	}
 
 	template<typename T>
-	inline void Rotate(Mat4& m, T angle, Vec3f& axis)
+	inline void Rotate(Mat4& m, T angle, Vec3f axis)
 	{
 		T const a = angle;
 		T const c = Cos(a);

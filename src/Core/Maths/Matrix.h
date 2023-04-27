@@ -129,7 +129,7 @@ namespace MiniRenderer
 			return mult;
 		}
 
-		Vec3f& operator*(Vec3f& v)
+		const Vec3f operator*(Vec3f& v)
 		{
 			Vec4f temp(v.x, v.y, v.z, 1.0f);
 			Vec4f mult(0);
@@ -144,7 +144,7 @@ namespace MiniRenderer
 			return Vec3f(mult.x, mult.y, mult.z);
 		}
 
-		Vec4f& operator*(Vec4f& v)
+		Vec4f operator*(Vec4f& v)
 		{
 			if (rows < 3) return v;
 
@@ -158,7 +158,7 @@ namespace MiniRenderer
 			return mult;
 		}
 
-		Matrix<rows, columns>& operator*=(float)
+		Matrix<rows, columns>& operator*=(float value)
 		{
 			for (int i = 0; i < m_Rows; ++i)
 				for (int j = 0; j < m_Columns; ++j)
@@ -166,7 +166,7 @@ namespace MiniRenderer
 
 			return *this;
 		}
-		Matrix<rows, columns> operator*(float)
+		Matrix<rows, columns> operator*(float value)
 		{
 			Matrix res(*this);
 
@@ -177,7 +177,7 @@ namespace MiniRenderer
 			return res;
 		}
 
-		Matrix<rows, columns>& operator/=(float)
+		Matrix<rows, columns>& operator/=(float value)
 		{
 			for (int i = 0; i < m_Rows; ++i)
 				for (int j = 0; j < m_Columns; ++j)
@@ -185,7 +185,7 @@ namespace MiniRenderer
 
 			return *this;
 		}
-		Matrix<rows, columns> operator/(float)
+		Matrix<rows, columns> operator/(float value)
 		{
 			Matrix res(*this);
 
@@ -260,7 +260,7 @@ namespace MiniRenderer
 			return (*this = transpose);
 		}
 
-		void Cofactor(const Matrix<rows, columns>& soruce, Matrix<rows, columns>& cofactor, size_t p, size_t q, size_t n) const
+		void Cofactor(const Matrix<rows, columns>& source, Matrix<rows, columns>& cofactor, size_t p, size_t q, size_t n) const
 		{
 			// This operation is applicable only on square matrices.
 			if (rows != columns)

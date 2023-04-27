@@ -127,6 +127,25 @@ namespace MiniRenderer
         XCloseDisplay(m_Display);
     }
 
+    void LinuxWindow::SetCursorPosition(int x, int y)
+    {
+        
+    }
+
+    void LinuxWindow::RenderCursor(bool show)
+    {
+        Cursor cursor;
+        // if(show)
+        //     XDefineCursor(m_Display, m_Window, cursor);
+        // else
+        //     XUndefineCursor(m_Display, m_Window);
+    }
+
+    void LinuxWindow::ConfineCursor(bool confine)
+    {
+
+    }
+
     void LinuxWindow::Init(const WindowProperties &props)
     {
         m_Data.Width = props.Width;

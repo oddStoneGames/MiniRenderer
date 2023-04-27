@@ -162,9 +162,8 @@ namespace MiniRenderer
 		inline void* operator new[](size_t x) { return _aligned_malloc(x, 16); }
 		inline void operator delete[](void* x) { if (x) _aligned_free(x); }
 #endif
-
-			// Member Variables
-			union
+		// Member Variables
+		union
 		{
 			struct { int x, y, z; };
 			__m128i _mValue;
@@ -189,7 +188,7 @@ namespace MiniRenderer
 	}
 
 	/// @brief Returns the Cross Product of integer vectors a & b.
-	inline const Vec3i& Cross(const Vec3i& a, const Vec3i& b)
+	inline Vec3i Cross(const Vec3i& a, const Vec3i& b)
 	{
 		// Returns a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x
 
@@ -205,7 +204,7 @@ namespace MiniRenderer
 		// _mm_castps_si128 - Reinterprets the four single precision floating point values in a as four 32-bit integers, and vice versa. 
 		// No conversion is performed.Does not map to any assembly instructions.
 
-		return  _mm_castps_si128(_mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(_mm_castsi128_ps(a._mValue), _mm_castsi128_ps(a._mValue), _MM_SHUFFLE(3, 0, 2, 1)),
+		return _mm_castps_si128(_mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(_mm_castsi128_ps(a._mValue), _mm_castsi128_ps(a._mValue), _MM_SHUFFLE(3, 0, 2, 1)),
 			_mm_shuffle_ps(_mm_castsi128_ps(b._mValue), _mm_castsi128_ps(b._mValue), _MM_SHUFFLE(3, 1, 0, 2))),
 			_mm_mul_ps(_mm_shuffle_ps(_mm_castsi128_ps(a._mValue), _mm_castsi128_ps(a._mValue), _MM_SHUFFLE(3, 1, 0, 2)),
 				_mm_shuffle_ps(_mm_castsi128_ps(b._mValue), _mm_castsi128_ps(b._mValue), _MM_SHUFFLE(3, 0, 2, 1)))));
@@ -271,9 +270,8 @@ namespace MiniRenderer
 		inline void* operator new[](size_t x) { return _aligned_malloc(x, 16); }
 		inline void operator delete[](void* x) { if (x) _aligned_free(x); }
 #endif
-
-			// Member Variables
-			union
+		// Member Variables
+		union
 		{
 			struct { float x, y, z; };
 			__m128 _mValue;
@@ -298,7 +296,7 @@ namespace MiniRenderer
 	}
 
 	/// @brief Returns the Cross Product of floating point vectors a & b.
-	inline const Vec3f& Cross(const Vec3f& a, const Vec3f& b)
+	inline Vec3f Cross(const Vec3f& a, const Vec3f& b)
 	{
 		// Returns a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x
 
@@ -311,9 +309,8 @@ namespace MiniRenderer
 		* For example, _mm_shuffle_ps(a,a,_MM_SHUFFLE(i,i,i,i)) copies the float a[i] into all 4 output floats.
 		*/
 		return _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(a._mValue, a._mValue, _MM_SHUFFLE(3, 0, 2, 1)),
-			_mm_shuffle_ps(b._mValue, b._mValue, _MM_SHUFFLE(3, 1, 0, 2))),
-			_mm_mul_ps(_mm_shuffle_ps(a._mValue, a._mValue, _MM_SHUFFLE(3, 1, 0, 2)),
-				_mm_shuffle_ps(b._mValue, b._mValue, _MM_SHUFFLE(3, 0, 2, 1))));
+					  _mm_shuffle_ps(b._mValue, b._mValue, _MM_SHUFFLE(3, 1, 0, 2))), _mm_mul_ps(_mm_shuffle_ps(a._mValue, a._mValue, _MM_SHUFFLE(3, 1, 0, 2)),
+					  _mm_shuffle_ps(b._mValue, b._mValue, _MM_SHUFFLE(3, 0, 2, 1))));
 	}
 
 #pragma endregion
